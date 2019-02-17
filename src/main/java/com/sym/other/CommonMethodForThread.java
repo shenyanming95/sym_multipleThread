@@ -8,8 +8,8 @@ package com.sym.other;
 public class CommonMethodForThread {
 
     public static void main(String[] args) {
-        //CommonMethodForThread.joinDemo();
-        //CommonMethodForThread.interruptDemo();
+        CommonMethodForThread.joinDemo();
+        CommonMethodForThread.interruptDemo();
         CommonMethodForThread.setPriorityDemo();
     }
 
