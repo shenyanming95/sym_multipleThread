@@ -1,0 +1,1 @@
+线程同步的知识点：使用Lock和使用Synchronized
