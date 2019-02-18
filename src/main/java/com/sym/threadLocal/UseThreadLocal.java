@@ -21,6 +21,8 @@ public class UseThreadLocal {
             // 打印信息
             new PrintA().print();
             new PrintB().print();
+            // 用完就要删除，不然会造成内存泄露
+            threadLocal.remove();
         }, "线程1").start();
 
         new Thread(() -> {
@@ -31,6 +33,8 @@ public class UseThreadLocal {
             // 打印信息
             new PrintA().print();
             new PrintB().print();
+            // 用完就要删除，不然会造成内存泄露
+            threadLocal.remove();
         }, "线程2").start();
 
 
