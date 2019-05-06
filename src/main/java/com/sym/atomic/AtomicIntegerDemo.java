@@ -1,43 +1,67 @@
 package com.sym.atomic;
 
+import org.junit.Test;
+
+import javax.annotation.processing.SupportedSourceVersion;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by 沈燕明 on 2018/12/22.
  */
 public class AtomicIntegerDemo {
 
+    // 默认初始值为10
     private AtomicInteger integer = new AtomicInteger(10);
 
-    private void print(){
-        String name = Thread.currentThread().getName();
-        while( integer.get() > 0 ){
-            System.out.println(name+"->"+integer.getAndDecrement());
-        }
-    }
-
-    public void printTest(){
+    /**
+     * getAndIncrement() -- 将当前值加1，并返回之前的值
+     * getAndDecrement() -- 将当前值减1，并返回之前的值
+     */
+    @Test
+    public void getAndDecrementTest(){
+        // 开启3个线程
         for( int i=1;i<4;i++ ){
             new Thread(()-> {
-                this.print();
+                String name = Thread.currentThread().getName();
+                while( integer.get() > 0 ){
+                    System.out.println(name+"->"+integer.getAndDecrement());
+                }
             }).start();
         }
     }
 
-    private void cas(int i){
-        int val = integer.get();
-        if( integer.compareAndSet(val,i) ){
-            System.out.println(Thread.currentThread().getName()+"成功修改值为："+integer.get());
+    /**
+     * getAndAdd() -- 将当前值与参数相加，并返回添加前的值
+     * addAndGet() -- 将当前值与参数相加，并返回添加后的值
+     */
+    @Test
+    public void addAndGetTest(){
+        for( int i=1;i<4;i++ ){
+            new Thread(()->{
+                String name = Thread.currentThread().getName();
+                int result = integer.getAndAdd(10);
+                System.out.println(name+"：->"+result);
+            }).start();
         }
     }
 
+
+    /**
+     * compareAndSet()：CAS方式修改，只会尝试一次，修改成功返回true，反之返回false
+     */
+    @Test
     public void casTest(){
         CountDownLatch latch = new CountDownLatch(3);
         for( int i=1;i<4;i++ ){
             new Thread(()-> {
-                this.cas(new Random().nextInt(1000));
+                int z = new Random().nextInt(1000);
+                int val = integer.get();
+                if( integer.compareAndSet(val,z) ){
+                    System.out.println(Thread.currentThread().getName()+"成功修改值为："+integer.get());
+                }
                 latch.countDown();
             }).start();
         }
@@ -48,10 +72,5 @@ public class AtomicIntegerDemo {
         }
         System.out.println("最终值："+integer.get());
     }
-    
-    public static void main(String[] args) {
-        AtomicIntegerDemo demo = new AtomicIntegerDemo();
-        //demo.printTest();
-        demo.casTest();
-    }
+
 }
