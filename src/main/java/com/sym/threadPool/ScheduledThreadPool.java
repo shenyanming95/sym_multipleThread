@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  * 通过ScheduledThreadPool创建，通过execute()方法加入任务
  *
  */
-public class ScheduledThreadPoolDemo {
+public class ScheduledThreadPool {
 
 	public static void main(String[] args) {
 		// 创建一个定时执行线程池,注意返回值为 ScheduledExecutorService

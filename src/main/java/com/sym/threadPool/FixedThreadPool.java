@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
  * 通过newFixedThreadPool创建，通过execute()方法加入任务
  *
  */
-public class FixedThreadPoolDemo {
+public class FixedThreadPool {
 
 	private static int count = 1;// 用于计数
 

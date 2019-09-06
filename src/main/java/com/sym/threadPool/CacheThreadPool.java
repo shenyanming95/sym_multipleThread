@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
  * 通过newCacheThreadPool创建，通过execute()方法加入任务
  *
  */
-public class CacheThreadPoolDemo {
+public class CacheThreadPool {
 
 	public static void main(String[] args) {
 		// 创建缓存线程池

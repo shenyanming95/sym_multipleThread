@@ -112,4 +112,11 @@ public class MainTest {
             lock.unlock();
         }
     }
+
+
+    @Test
+    public void testSix(){
+        int i = Runtime.getRuntime().availableProcessors();
+        System.out.println("当前操作系统的CPU数量："+i);
+    }
 }

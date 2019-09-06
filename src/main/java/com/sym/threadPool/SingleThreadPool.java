@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
  * 创建单线程化的线程池，在同一时刻，只有一个线程处于运行状态
  * 通过SingleThreadExecutor创建，通过execute()方法加入任务
  */
-public class SingleThreadExecutorDemo {
+public class SingleThreadPool {
     public static void main(String[] args) {
         // 创建单线程的线程池,同一时间内只有一个线程在执行
         ExecutorService pool = Executors.newSingleThreadExecutor();
