@@ -2,10 +2,7 @@ package com.sym;
 
 import org.junit.Test;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -15,9 +12,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MainTest {
     
     public static void main(String[] args) {
-        Thread t1 = new Thread(()->{});
-        t1.start();
-        t1.setDaemon(true);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+//        executorService.execute(()->{
+//            System.out.println("11");
+//        });
     }
 
     @Test
@@ -118,5 +116,14 @@ public class MainTest {
     public void testSix(){
         int i = Runtime.getRuntime().availableProcessors();
         System.out.println("当前操作系统的CPU数量："+i);
+    }
+
+
+    @Test
+    public void testSeven(){
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->{
+            System.out.println("11");
+        });
     }
 }
