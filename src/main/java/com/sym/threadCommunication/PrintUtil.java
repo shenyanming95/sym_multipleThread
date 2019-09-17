@@ -19,7 +19,7 @@ public class PrintUtil {
     public void mainPrint() {
         synchronized (flag) {
             // 建议在while循环内判断wait()条件，保证线程运行前后都可以检查运行条件
-            while (flag.get() == false) {
+            while (!flag.get()) {
                 try {
                     // 当flag为false，条件不满足，主线程挂起等待
                     flag.wait();
@@ -44,7 +44,7 @@ public class PrintUtil {
     public void threadPrint() {
         synchronized (flag) {
             // 建议在while循环内判断wait()条件，保证线程运行前后都可以检查运行条件
-            while (flag.get() == true) {
+            while (flag.get()) {
                 try {
                     // 当flag为true时，子线程挂起等待
                     flag.wait();
