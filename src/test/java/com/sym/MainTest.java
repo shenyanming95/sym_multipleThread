@@ -2,6 +2,9 @@ package com.sym;
 
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,10 +15,12 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MainTest {
     
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newCachedThreadPool();
-//        executorService.execute(()->{
-//            System.out.println("11");
-//        });
+        Map<String,String> map = new HashMap<>();
+        map.put("1","11");
+        map.put("2","22");
+        map.put("3","33");
+        map.entrySet().removeIf(next -> "2".equals(next.getKey()));
+        System.out.println(map);
     }
 
     @Test
