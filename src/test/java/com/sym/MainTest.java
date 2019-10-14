@@ -2,9 +2,6 @@ package com.sym;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,15 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by 沈燕明 on 2018/12/22.
  */
 public class MainTest {
-    
-    public static void main(String[] args) {
-        Map<String,String> map = new HashMap<>();
-        map.put("1","11");
-        map.put("2","22");
-        map.put("3","33");
-        map.entrySet().removeIf(next -> "2".equals(next.getKey()));
-        System.out.println(map);
-    }
+
 
     @Test
     public void testOne() {
@@ -58,21 +47,10 @@ public class MainTest {
         }
     }
 
-    synchronized void setA() throws Exception{
-        Thread.sleep(1000);
-        setB();
-    }
-
-    synchronized void setB() throws Exception{
-        Thread.sleep(1000);
-    }
 
     @Test
     public void testThree(){
-        // 非公平锁
-        Lock lock = new ReentrantLock();
-        // 公平锁
-        Lock lock1 = new ReentrantLock(true);
+
     }
 
     @Test
@@ -117,12 +95,6 @@ public class MainTest {
     }
 
 
-    @Test
-    public void testSix(){
-        int i = Runtime.getRuntime().availableProcessors();
-        System.out.println("当前操作系统的CPU数量："+i);
-    }
-
 
     @Test
     public void testSeven(){
@@ -130,5 +102,11 @@ public class MainTest {
         executorService.execute(()->{
             System.out.println("11");
         });
+    }
+
+    @Test
+    public void testEight(){
+
+
     }
 }
