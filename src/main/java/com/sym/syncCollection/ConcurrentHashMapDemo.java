@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * {@link ConcurrentHashMap}的并发使用
+ *
  * Created by shenym on 2019/10/15.
  */
 public class ConcurrentHashMapDemo {
@@ -49,7 +51,7 @@ public class ConcurrentHashMapDemo {
      * 一个线程执行这个方法, 一直在遍历Map
      * @param map
      */
-    public static void iterator(ConcurrentHashMap<String,String> map) throws InterruptedException {
+    private static void iterator(ConcurrentHashMap<String, String> map) throws InterruptedException {
         Iterator<Map.Entry<String,String>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()){
             Map.Entry<String, String> entry = iterator.next();
@@ -64,7 +66,7 @@ public class ConcurrentHashMapDemo {
     /**
      * 一个线程执行这个方法, 向Map中添加数据
      */
-    public static void add(ConcurrentHashMap<String,String> map) throws InterruptedException {
+    private static void add(ConcurrentHashMap<String, String> map) throws InterruptedException {
         map.put(random.nextInt(1000)+"","66");
         Thread.sleep(100);
     }
