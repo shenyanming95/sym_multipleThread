@@ -7,13 +7,11 @@ import java.util.concurrent.*;
  * 为了更好地记录任务，我们不能仅仅使用{@link Runnable}对象，这样获取
  * 不到任何信息，更多的是实现它加入系统需要的一些属性，如{@link AbstractMonitorRunnable}
  *
- * Created by shenYm on 2019/9/7.
+ * Created by shenym on 2019/9/7.
  */
 public class SymMonitorThreadPool extends ThreadPoolExecutor {
 
-    public SymMonitorThreadPool(int corePoolSize, int maximumPoolSize,
-                                long keepAliveTime, TimeUnit unit,
-                                BlockingQueue<Runnable> workQueue) {
+    SymMonitorThreadPool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
     }
 

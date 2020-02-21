@@ -17,8 +17,10 @@ public class CustomizedRejectedExecutionHandler implements RejectedExecutionHand
      */
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-        int activeCount = executor.getActiveCount();//当前正在执行的任务数
-        long completedTaskCount = executor.getCompletedTaskCount();//已完成的任务数
+        //当前正在执行的任务数
+        int activeCount = executor.getActiveCount();
+        //已完成的任务数
+        long completedTaskCount = executor.getCompletedTaskCount();
         int largestPoolSize = executor.getLargestPoolSize();
         long taskCount = executor.getTaskCount();
         System.out.println("线程池运行数："+activeCount+",无法执行任务："+r);

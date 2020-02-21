@@ -12,14 +12,14 @@ import java.io.Serializable;
  * 为了使用线程池执行任务时，能较多的获取任务的信息，我们不能仅仅使用
  * {@link Runnable}对象，这样能获取的信息实在是少
  *
- * Created by shenYm on 2019/9/7.
+ * Created by shenym on 2019/9/7.
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString
-public abstract class AbstractMonitorRunnable implements Runnable, Serializable {
+abstract class AbstractMonitorRunnable implements Runnable, Serializable {
 
     private Long id;
     private groupType groupType;
