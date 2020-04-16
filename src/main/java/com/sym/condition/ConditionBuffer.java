@@ -1,4 +1,4 @@
-package com.sym.customBuffer.condition;
+package com.sym.condition;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -7,31 +7,43 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * 使用Lock+Condition实现的缓冲区
  *
- * @Auther: shenym
- * @Date: 2018-12-28 14:20
+ * @author shenyanming
+ * @date 2018-12-28 14:20
  */
-public class ConditionBuffer {
+public class ConditionBuffer<T> {
 
-    // 底层存储数组的默认大小
-    private final static int DEFAULTSIZE = 10;
+    /**
+     * 底层存储数组的默认大小
+     */
+    private final static int DEFAULT_SIZE = 10;
 
-    // 定义对象数组来存储数据
+    /**
+     * 定义对象数组来存储数据
+     */
     private Object[] dataArray;
 
-    // 定义对象存储数组的总量、生产者put时的下标、生产者get时的下标
+    /**
+     * 定义对象存储数组的总量、生产者put时的下标、生产者get时的下标
+     */
     private int count, putIndex, getIndex;
 
-    // 把Lock定义为成员变量,这样创建实例时,每个缓冲区各自拥有自己的锁
+    /**
+     * 把Lock定义为成员变量,这样创建实例时,每个缓冲区各自拥有自己的锁
+     */
     private Lock lock = new ReentrantLock();
 
-    // 消费者线程的条件变量
+    /**
+     * 消费者线程的条件变量
+     */
     private Condition consumerCondition = lock.newCondition();
 
-    // 生产者线程的条件变量
+    /**
+     * 生产者线程的条件变量
+     */
     private Condition producerCondition = lock.newCondition();
 
     public ConditionBuffer() {
-        this(DEFAULTSIZE);
+        this(DEFAULT_SIZE);
     }
 
     public ConditionBuffer(int capacity) {
@@ -44,9 +56,9 @@ public class ConditionBuffer {
     /**
      * 生产者添加新数据
      *
-     * @param obj
+     * @param t 数据
      */
-    public void put(Object obj) {
+    public void put(T t) {
         lock.lock();
         try {
             // 判断底层对象数组是否已满,注意是逻辑上的判断哦
@@ -63,9 +75,9 @@ public class ConditionBuffer {
                 // 因为这是一个循环数组,当putIndex等于数组长度时,说明此时数组数据已被取走，只不过仍保留在数组而已
                 putIndex = 0;
             }
-            dataArray[putIndex++] = obj;
+            dataArray[putIndex++] = t;
             count++;
-            System.out.println(Thread.currentThread().getName() + "-写入：" + obj+"-当前容量："+count);
+            System.out.println(Thread.currentThread().getName() + "-写入：" + t+"-当前容量："+count);
             // 数据存放完以后,唤醒消费者线程取走数据
             consumerCondition.signalAll();
         } finally {
@@ -77,9 +89,10 @@ public class ConditionBuffer {
     /**
      * 消费者取走数据
      *
-     * @return
+     * @return 数据
      */
-    public Object get() {
+    @SuppressWarnings("unchecked")
+    public T get() {
         lock.lock();
         try {
 
@@ -102,7 +115,7 @@ public class ConditionBuffer {
             System.out.println(Thread.currentThread().getName() + "-取走：" + retObj+",当前容量："+count);
             // 数组取走以后,就可以唤醒生产者继续生产
             producerCondition.signalAll();
-            return retObj;
+            return (T)retObj;
         } finally {
             lock.unlock();
         }
