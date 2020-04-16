@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>Java多线程与并发库</name>
+    <description>juc工具包 + 多线程问题 + 并发处理</description>
 
     <dependencies>
 
@@ -26,8 +27,6 @@
             <version>1.16.20</version>
             <scope>provided</scope>
         </dependency>
-
-
 
     </dependencies>
 
