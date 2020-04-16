@@ -1,1 +1,0 @@
-讲述线程通信的知识点：wait()、notify()、notifyAll()
