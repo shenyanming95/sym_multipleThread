@@ -1,24 +1,30 @@
-package com.sym.customBuffer.tradition;
+package com.sym.communication;
 
 /**
  * 使用wait()+notifyAll()实现的缓冲区
  *
- * @Auther: shenym
- * @Date: 2018-12-28 16:30
+ * @author ym.shen
+ * @date 2018-12-28 16:30
  */
-public class TraditionBuffer {
+public class TraditionBuffer<T> {
 
-    // 底层存储数组的默认大小
-    private final static int DEFAULTSIZE = 10;
+    /**
+     * 底层存储数组的默认大小
+     */
+    private final static int DEFAULT_SIZE = 10;
 
-    // 定义对象数组来存储数据
-    private Object[] dataArray;
+    /**
+     * 定义对象数组来存储数据
+     */
+    private final Object[] dataArray;
 
-    // 定义对象存储数组的总量、生产者put时的下标、生产者get时的下标
+    /**
+     * 定义对象存储数组的总量、生产者put时的下标、生产者get时的下标
+     */
     private int count, putIndex, getIndex;
 
     public TraditionBuffer() {
-        this(DEFAULTSIZE);
+        this(DEFAULT_SIZE);
     }
 
     public TraditionBuffer(int capacity) {
@@ -31,9 +37,9 @@ public class TraditionBuffer {
     /**
      * 生产者添加新数据
      *
-     * @param obj
+     * @param t 数据
      */
-    public void put(Object obj) {
+    public void put(T t) {
         synchronized (dataArray) {
             // 如果数组已满，则生产者不能再添加数据了
             while (count == dataArray.length) {
@@ -49,9 +55,9 @@ public class TraditionBuffer {
                 // 将对象数组逻辑上当成循环体，每当putIndex等于数组容量，则从头开始
                 putIndex = 0;
             }
-            dataArray[putIndex++] = obj;
+            dataArray[putIndex++] = t;
             count++;
-            System.out.println(Thread.currentThread().getName() + "-写入：" + obj + "-当前容量：" + count);
+            System.out.println(Thread.currentThread().getName() + "-写入：" + t + "-当前容量：" + count);
             // 数据写入以后就要唤醒消费者线程取走数据
             dataArray.notifyAll();
         }
@@ -61,9 +67,10 @@ public class TraditionBuffer {
     /**
      * 消费者取走数据
      *
-     * @return
+     * @return 数据
      */
-    public Object get() {
+    @SuppressWarnings("unchecked")
+    public T get() {
         synchronized (dataArray) {
             // 如果数组已空，则消费者不能再取走数据
             while (count == 0) {
@@ -84,7 +91,7 @@ public class TraditionBuffer {
             System.out.println(Thread.currentThread().getName() + "-取走：" + retObj + ",当前容量：" + count);
             // 数据取走之后就要唤醒生产者继续生产
             dataArray.notifyAll();
-            return retObj;
+            return (T)retObj;
         }
     }
 
