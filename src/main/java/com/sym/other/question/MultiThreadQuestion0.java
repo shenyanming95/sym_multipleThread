@@ -1,21 +1,30 @@
-package com.sym.other;
+package com.sym.other.question;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 线程依次执行：T1执行完执行T2，T2执行完执行T3
- *
- * @Date: 2018-07-13 16:28
+ * 多线程练习题目：线程依次执行：T1执行完执行T2，T2执行完执行T3
+ * @author ym.shen
+ * create one 2018-07-13 16:28
  */
-public class ThreadRunOneByOne {
+public class MultiThreadQuestion0 {
 
     Lock lock = new ReentrantLock();
     int i = 0;
-    Condition c1 = lock.newCondition();// 线程1的唤醒条件
-    Condition c2 = lock.newCondition();// 线程2的唤醒条件
-    Condition c3 = lock.newCondition();// 线程3的唤醒条件
+    /**
+     * 线程1的唤醒条件
+     */
+    Condition c1 = lock.newCondition();
+    /**
+     * 线程2的唤醒条件
+     */
+    Condition c2 = lock.newCondition();
+    /**
+     * 线程3的唤醒条件
+     */
+    Condition c3 = lock.newCondition();
 
 
     public static void main(String[] args) {
@@ -69,7 +78,7 @@ public class ThreadRunOneByOne {
     public static void useCondition() {
         try {
 
-            final ThreadRunOneByOne obj = new ThreadRunOneByOne();
+            final MultiThreadQuestion0 obj = new MultiThreadQuestion0();
             new Thread(new Runnable() {
                 @Override
                 public void run() {

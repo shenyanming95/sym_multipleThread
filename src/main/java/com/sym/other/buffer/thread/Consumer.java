@@ -1,21 +1,26 @@
-package com.sym.other.ownBuffer;
+package com.sym.other.buffer.thread;
+
+import com.sym.other.buffer.OwnBuffer;
 
 /**
- * @Auther: shenym
- * @Date: 2018-12-06 10:31
+ * 消费者
+ * @author ym.shen
+ * Created on 2020/4/16 11:57
  */
-public class ConsumerThread implements Runnable {
+public class Consumer implements Runnable{
 
-    // 模拟缓冲区
-    private OwnBuffer ownBuffer;
+    /**
+     * 缓冲区
+     */
+    private final OwnBuffer ownBuffer;
 
-    public ConsumerThread(OwnBuffer ownBuffer){
+    public Consumer(OwnBuffer ownBuffer){
         this.ownBuffer = ownBuffer;
     }
 
     @Override
     public void run() {
-        while( true ){
+        while(Thread.currentThread().isInterrupted()){
             synchronized (ownBuffer){
                 while( ownBuffer.getData().size() == 0 ){
                     try {

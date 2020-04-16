@@ -1,21 +1,26 @@
-package com.sym.other.ownBuffer;
+package com.sym.other.buffer.thread;
+
+import com.sym.other.buffer.OwnBuffer;
 
 /**
- * @Auther: shenym
- * @Date: 2018-12-06 11:08
+ * 生产者
+ * @author ym.shen
+ * Created on 2020/4/16 11:57
  */
-public class ProducerThread implements Runnable {
+public class Producer implements Runnable{
 
-    private OwnBuffer ownBuffer;
+    /**
+     * 缓冲区
+     */
+    private final OwnBuffer ownBuffer;
 
-    public ProducerThread(OwnBuffer ownBuffer){
+    public Producer(OwnBuffer ownBuffer){
         this.ownBuffer = ownBuffer;
     }
 
-
     @Override
     public void run() {
-        while (true){
+        while (Thread.currentThread().isInterrupted()){
             synchronized (ownBuffer){
                 while ( ownBuffer.getData().size() == 10 ){
                     try {
@@ -28,8 +33,6 @@ public class ProducerThread implements Runnable {
                 ownBuffer.put("1");
                 System.out.println("生产者开始生产,缓冲区大小="+ownBuffer.getData().size());
             }
-
         }
-
     }
 }
