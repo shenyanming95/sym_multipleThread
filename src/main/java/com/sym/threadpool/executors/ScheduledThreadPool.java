@@ -1,4 +1,4 @@
-package com.sym.threadPool.executors;
+package com.sym.threadpool.executors;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executors;

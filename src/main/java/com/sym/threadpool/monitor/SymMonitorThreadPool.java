@@ -1,4 +1,4 @@
-package com.sym.threadPool.monitor;
+package com.sym.threadpool.monitor;
 
 import java.util.concurrent.*;
 

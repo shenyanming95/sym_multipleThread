@@ -1,4 +1,4 @@
-package com.sym.threadPool.customization;
+package com.sym.threadpool.customization;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
