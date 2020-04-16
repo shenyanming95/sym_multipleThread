@@ -1,4 +1,4 @@
-package com.sym.threadLocal;
+package com.sym.threadlocal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
