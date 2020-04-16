@@ -7,7 +7,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author ym.shen
  * @date 2018/12/31
  */
-public class SymArrayBlockingQueue {
+public class _ArrayBlockingQueue {
 
     /**
      * 创建指定容量的阻塞队列,因为它是数组实现的,所以必须指定容量

@@ -4,8 +4,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Random;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,7 +20,7 @@ public class ArrayBlockingQueueTest {
 	public void test0() throws IOException {
 		// 线程池
 		ExecutorService threadPool = Executors.newFixedThreadPool(10);
-		SymArrayBlockingQueue demo = new SymArrayBlockingQueue();
+		_ArrayBlockingQueue demo = new _ArrayBlockingQueue();
 		// 开启2个生产者线程
 		for (int i = 0; i < 2; i++) {
 			final int j = i + 1;
