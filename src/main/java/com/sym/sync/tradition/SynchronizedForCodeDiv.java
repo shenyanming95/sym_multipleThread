@@ -1,4 +1,4 @@
-package com.sym.threadSync.userSynchronized;
+package com.sym.sync.tradition;
 /**
  * synchronized修饰代码块
  *

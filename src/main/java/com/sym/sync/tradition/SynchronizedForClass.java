@@ -1,4 +1,4 @@
-package com.sym.threadSync.userSynchronized;
+package com.sym.sync.tradition;
 /**
  * synchronized修饰类,即修饰类的类类型
  *

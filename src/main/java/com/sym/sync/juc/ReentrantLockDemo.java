@@ -1,4 +1,4 @@
-package com.sym.threadSync.useLock;
+package com.sym.sync.juc;
 
 import org.junit.Test;
 

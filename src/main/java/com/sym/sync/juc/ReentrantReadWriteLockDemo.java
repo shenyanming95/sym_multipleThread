@@ -1,4 +1,4 @@
-package com.sym.threadSync.useLock;
+package com.sym.sync.juc;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
