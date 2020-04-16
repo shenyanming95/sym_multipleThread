@@ -20,7 +20,7 @@ public class Producer implements Runnable{
 
     @Override
     public void run() {
-        while (Thread.currentThread().isInterrupted()){
+        while (!Thread.currentThread().isInterrupted()){
             synchronized (ownBuffer){
                 while ( ownBuffer.getData().size() == 10 ){
                     try {
