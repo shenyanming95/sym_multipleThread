@@ -1,4 +1,4 @@
-package com.sym.callableAndFuture;
+package com.sym.future;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -7,6 +7,7 @@ import java.util.concurrent.FutureTask;
 /**
  * FutureTask类实现Runnable和Future接口，因此既可以作为Runnable被Thread执行，也可以作为
  * Future作为Callable的返回值，使用线程池的submit()方法来执行FutureTask
+ * @author shenyanming
  */
 public class FutureTaskDemo {
     public static void main(String[] args) throws Exception {
