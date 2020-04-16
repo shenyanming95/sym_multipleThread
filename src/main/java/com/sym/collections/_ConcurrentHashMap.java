@@ -1,4 +1,4 @@
-package com.sym.syncCollection;
+package com.sym.collections;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -9,9 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * {@link ConcurrentHashMap}的并发使用
  *
- * Created by shenym on 2019/10/15.
+ *
+ * @author shenym
+ * @date 2019/10/15
  */
-public class ConcurrentHashMapDemo {
+public class _ConcurrentHashMap {
 
     private static Random random = new Random();
 
@@ -27,7 +29,7 @@ public class ConcurrentHashMapDemo {
         new Thread(()->{
             try {
                 for(;;){
-                    ConcurrentHashMapDemo.add(map);
+                    _ConcurrentHashMap.add(map);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -37,7 +39,7 @@ public class ConcurrentHashMapDemo {
         // 线程2
         new Thread(()->{
             try {
-                ConcurrentHashMapDemo.iterator(map);
+                _ConcurrentHashMap.iterator(map);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

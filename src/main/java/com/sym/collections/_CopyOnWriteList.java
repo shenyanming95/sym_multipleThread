@@ -1,6 +1,5 @@
-package com.sym.syncCollection;
+package com.sym.collections;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
@@ -8,9 +7,11 @@ import java.util.concurrent.*;
 /**
  * {@link java.util.concurrent.CopyOnWriteArrayList}的并发使用
  * <p>
- * Created by shenym on 2020/1/19.
+ *
+ * @author shenym
+ * @date 2020/1/19
  */
-public class CopyOnWriteListDemo {
+public class _CopyOnWriteList {
 
     public static void main(String[] args) throws InterruptedException {
         // 普通ArrayList集合. 多线程环境下扩容时, 其它线程来写入, 容易出现ArrayIndexOutOfBoundsException异常
