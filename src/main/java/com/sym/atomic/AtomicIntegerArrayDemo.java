@@ -13,10 +13,14 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
  */
 public class AtomicIntegerArrayDemo {
 
-    // 若以这种方式创建AtomicIntegerArray，它会初始化一个指定size的整型数组，默认值都为0
+    /**
+     * 若以这种方式创建AtomicIntegerArray，它会初始化一个指定size的整型数组，默认值都为0
+     */
     private AtomicIntegerArray atomicIntegerArray = new AtomicIntegerArray(10);
 
-    // 若以这种方式创建AtomicIntegerArray，它将当前数组拷贝一份，不会影响到原数组
+    /**
+     * 若以这种方式创建AtomicIntegerArray，它将当前数组拷贝一份，不会影响到原数组
+     */
     private AtomicIntegerArray atomicIntegerArray1 = new AtomicIntegerArray(new int[]{1, 2, 3, 4});
 
     /**

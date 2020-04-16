@@ -11,7 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AtomicIntegerDemo {
 
-    // 默认初始值为10
+    /**
+     * 默认初始值为10
+     */
     private AtomicInteger integer = new AtomicInteger(10);
 
     /**
