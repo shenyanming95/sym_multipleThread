@@ -1,4 +1,4 @@
-package com.sym.blockingqueue;
+package com.sym.blockingqueue.array;
 
 import org.junit.Test;
 
