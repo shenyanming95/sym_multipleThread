@@ -16,17 +16,17 @@ public class JoinMethodTest {
      * 等指定线程执行完，当前线程会重新申请CPU资源执行
      */
     @Test
-    public void runTest(){
-        Thread t1 = new Thread(()->{
-            for(int i=1;i<6;i++){
+    public void runTest() {
+        Thread t1 = new Thread(() -> {
+            for (int i = 1; i < 6; i++) {
                 System.out.println("线程1执行");
             }
         });
-        Thread t2 = new Thread(()->{
+        Thread t2 = new Thread(() -> {
             try {
                 // t2线程会挂起，让t1线程先执行，直至t1线程执行完
                 t1.join();
-                for(int i=1;i<6;i++){
+                for (int i = 1; i < 6; i++) {
                     System.out.println("线程2执行");
                 }
             } catch (InterruptedException e) {
@@ -35,7 +35,7 @@ public class JoinMethodTest {
         });
         t1.start();
         t2.start();
-        ThreadUtil.sync();
+        ThreadUtil.keepAlive();
     }
 
 }

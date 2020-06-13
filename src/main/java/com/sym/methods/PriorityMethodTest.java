@@ -36,6 +36,6 @@ public class PriorityMethodTest {
         t2.start();
         t3.start();
         t4.start();
-        ThreadUtil.sync();
+        ThreadUtil.keepAlive();
     }
 }

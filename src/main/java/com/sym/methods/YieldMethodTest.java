@@ -38,6 +38,6 @@ public class YieldMethodTest {
         });
         t2.start();
 
-        ThreadUtil.sync();
+        ThreadUtil.keepAlive();
     }
 }

@@ -50,7 +50,7 @@ public class InterruptMethodTest {
             e.printStackTrace();
         }
         // 主线程阻塞同步
-        ThreadUtil.sync();
+        ThreadUtil.keepAlive();
     }
 
 
@@ -73,7 +73,7 @@ public class InterruptMethodTest {
         System.out.println("线程t1是否中断?"+t1.isInterrupted());
         System.out.println("线程t1是否中断?"+t1.isInterrupted());
 
-        ThreadUtil.sync();
+        ThreadUtil.keepAlive();
     }
 
 
@@ -97,6 +97,6 @@ public class InterruptMethodTest {
             }
         });
         t1.start();
-        ThreadUtil.sync();
+        ThreadUtil.keepAlive();
     }
 }
