@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 /**
  * 原子操作类 AtomicIntegerArray 的一个demo
  *
- * @author 沈燕明
+ * @author shenyanming
  * @date 2019/5/6 14:50
  */
 public class AtomicIntegerArrayDemo {
