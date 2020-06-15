@@ -11,13 +11,13 @@ import java.util.concurrent.TimeUnit;
  *
  * Created by shenYm on 2019/9/7.
  */
-public class MonitorTheadPoolTest {
+public class MonitorThreadPoolTest {
 
-    private SymMonitorThreadPool symMonitorThreadPool;
+    private MonitorThreadPool symMonitorThreadPool;
 
     @Before
     public void init(){
-        symMonitorThreadPool = new SymMonitorThreadPool(2,
+        symMonitorThreadPool = new MonitorThreadPool(2,
                 4,
                 1, TimeUnit.MINUTES,
                 new ArrayBlockingQueue<>(6));
@@ -30,9 +30,9 @@ public class MonitorTheadPoolTest {
     @Test
     public void testOne() throws InterruptedException {
         AbstractMonitorRunnable runnable = new AbstractMonitorRunnable(){
+            private static final long serialVersionUID = 1188315023040219806L;
             @Override
             public void run() {
-
             }
         };
         runnable.setId(100L);
@@ -51,6 +51,7 @@ public class MonitorTheadPoolTest {
     @Test
     public void testTwo() throws InterruptedException {
         AbstractMonitorRunnable runnable = new AbstractMonitorRunnable(){
+            private static final long serialVersionUID = 4769166163856115066L;
             @Override
             public void run() {
                 throw new IllegalArgumentException("something wrong");
@@ -74,6 +75,7 @@ public class MonitorTheadPoolTest {
         for( int i = 0;i<10;i++ ){
             final int z = i;
             AbstractMonitorRunnable runnable = new AbstractMonitorRunnable() {
+                private static final long serialVersionUID = -7982795401212112033L;
                 @Override
                 public void run() {
                     if( z % 2 == 0) {
