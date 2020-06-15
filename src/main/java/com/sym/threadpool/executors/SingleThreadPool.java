@@ -6,6 +6,8 @@ import java.util.concurrent.Executors;
 /**
  * 创建单线程化的线程池，在同一时刻，只有一个线程处于运行状态
  * 通过SingleThreadExecutor创建，通过execute()方法加入任务
+ *
+ * @author shenyanming
  */
 public class SingleThreadPool {
     public static void main(String[] args) {
@@ -21,7 +23,5 @@ public class SingleThreadPool {
         }
         //关闭线程池，不在接收新的任务，处于关闭状态，等所有执行的线程都执行完以后，终止线程池
         pool.shutdown();
-
     }
-
 }

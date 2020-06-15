@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
  * 其余时间 ScheduledExecutor 都是在轮询任务的状态
  * 通过ScheduledThreadPool创建，通过execute()方法加入任务
  *
+ * @author shenyanming
  */
 public class ScheduledThreadPool {
 
@@ -19,7 +20,9 @@ public class ScheduledThreadPool {
 		scheduledThreadPool.schedulePeriodic();
 	}
 
-	/* 创建调度线程池,注意返回值为 ScheduledExecutorService */
+	/**
+	 * 创建调度线程池,注意返回值为 ScheduledExecutorService
+	 */
 	ScheduledExecutorService pool = Executors.newScheduledThreadPool(5);
 
 	/**

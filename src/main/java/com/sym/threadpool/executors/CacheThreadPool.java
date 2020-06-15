@@ -2,10 +2,10 @@ package com.sym.threadpool.executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 /**
- * 创建根据需要new新线程的缓存线程池
- *
+ * 创建根据需要new新线程的缓存线程池,
  * 通过newCacheThreadPool创建，通过execute()方法加入任务
  *
+ * @author shenyanming
  */
 public class CacheThreadPool {
 
@@ -28,7 +28,6 @@ public class CacheThreadPool {
 		}
 		//关闭线程池，不在接收新的任务，处于关闭状态，等所有执行的线程都执行完以后，终止线程池
 		pool.shutdown();
-
 	}
 
 }
