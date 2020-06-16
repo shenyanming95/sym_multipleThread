@@ -68,16 +68,18 @@ public class FutureThreadPool extends ThreadPoolExecutor {
     @SuppressWarnings("unchecked")
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
-        // 强转成 SymFutureTask 对象, 取出它的 IFuture 对象
-        SymFutureTask<?> futureTask = (SymFutureTask<?>) r;
-        IFuture future = futureTask.getFuture();
+        if(r instanceof SymFutureTask){
+            // 强转成 SymFutureTask 对象, 取出它的 IFuture 对象
+            SymFutureTask<?> futureTask = (SymFutureTask<?>) r;
+            IFuture future = futureTask.getFuture();
 
-        // 若异常信息为null, 说明没有抛出异常, 异步执行成功
-        if (Objects.isNull(t)) {
-            future.setResult(futureTask.getResult());
-        } else {
-            // 反之说明异步执行失败
-            future.setError(t);
+            // 若异常信息为null, 说明没有抛出异常, 异步执行成功
+            if (Objects.isNull(t)) {
+                future.setResult(futureTask.getResult());
+            } else {
+                // 反之说明异步执行失败
+                future.setError(t);
+            }
         }
     }
 }

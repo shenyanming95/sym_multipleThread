@@ -188,6 +188,10 @@ public class SymFuture<V> implements IFuture<V> {
      * @param isSuccess 为true时执行成功回调, 反之执行异常回调
      */
     private void doCallback(boolean isSuccess) {
+        if(Objects.isNull(listeners)){
+            // 未添加任何监听器
+            return;
+        }
         if (atomicReferenceFieldUpdater.compareAndSet(this, null, true)) {
             int alreadyDone = 0;
             for (; ; ) {
