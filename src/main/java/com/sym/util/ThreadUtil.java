@@ -1,8 +1,5 @@
 package com.sym.util;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.ArrayBlockingQueue;
