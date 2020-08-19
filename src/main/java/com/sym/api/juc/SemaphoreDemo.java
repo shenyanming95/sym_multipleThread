@@ -1,4 +1,4 @@
-package com.sym.tools;
+package com.sym.api.juc;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,7 +14,7 @@ import java.util.concurrent.Semaphore;
  * @author ym.shen
  * Created on 2020/4/16 15:46
  */
-public class _Semaphore {
+public class SemaphoreDemo {
 
     /**
      * 指定只有3个许可信号,意味着同一时间只有3个线程可以执行
@@ -44,7 +44,7 @@ public class _Semaphore {
     }
 
     public static void main(String[] args) {
-        _Semaphore semaphore = new _Semaphore();
+        SemaphoreDemo semaphore = new SemaphoreDemo();
         ExecutorService threadPool = Executors.newFixedThreadPool(6);
         for( int i=0;i<6;i++ ){
             final int j = i+1;

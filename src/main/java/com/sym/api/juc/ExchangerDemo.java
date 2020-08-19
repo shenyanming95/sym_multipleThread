@@ -1,4 +1,4 @@
-package com.sym.tools;
+package com.sym.api.juc;
 
 import java.security.SecureRandom;
 import java.util.concurrent.Exchanger;
@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
  * @author ym.shen
  * Created on 2020/4/16 15:43
  */
-public class _Exchanger {
+public class ExchangerDemo {
 
     /**
      * 初始化一个交换器
@@ -58,7 +58,7 @@ public class _Exchanger {
     }
 
     public static void main(String[] args) {
-        _Exchanger exchanger = new _Exchanger();
+        ExchangerDemo exchanger = new ExchangerDemo();
         ExecutorService threadPool = Executors.newFixedThreadPool(1);
         // 开启一个子线程作为卖家线程
         threadPool.execute(() -> {

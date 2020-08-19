@@ -1,4 +1,4 @@
-package com.sym.tools;
+package com.sym.api.juc;
 
 import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
  * @author ym.shen
  * Created on 2020/4/16 15:39
  */
-public class _CyclicBarrier {
+public class CyclicBarrierDemo {
 
     /**
      * 实例化一个等待数为3的屏障，如果只有2个线程在运行，则会永远地等待下去
@@ -44,7 +44,7 @@ public class _CyclicBarrier {
     }
 
     public static void main(String[] args) {
-        _CyclicBarrier cyclicBarrier = new _CyclicBarrier();
+        CyclicBarrierDemo cyclicBarrier = new CyclicBarrierDemo();
         ExecutorService threadPool = Executors.newFixedThreadPool(3);
         // 开启三个执行
         for (int i = 0; i < 3; i++) {

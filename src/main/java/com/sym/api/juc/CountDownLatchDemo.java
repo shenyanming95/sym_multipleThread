@@ -1,4 +1,4 @@
-package com.sym.tools;
+package com.sym.api.juc;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
  * @author ym.shen
  * Created on 2020/4/16 15:31
  */
-public class _CountDownLatch {
+public class CountDownLatchDemo {
 
     /**
      * 这个计数器值为1，是给运动员用的，运动员听到裁判的起跑命令后才开始比赛
@@ -73,7 +73,7 @@ public class _CountDownLatch {
     }
 
     public static void main(String[] args) {
-        _CountDownLatch countDownLatch = new _CountDownLatch();
+        CountDownLatchDemo countDownLatch = new CountDownLatchDemo();
         // 主线程作为裁判线程
         Thread.currentThread().setName("裁判");
         // 开启两个线程作为运动员线程
