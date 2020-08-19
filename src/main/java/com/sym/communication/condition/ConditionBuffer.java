@@ -1,11 +1,12 @@
-package com.sym.condition;
+package com.sym.communication.condition;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * 使用Lock+Condition实现的缓冲区
+ * JUC下的线程通信, {@link Condition}
+ * 模拟实现的缓冲区
  *
  * @author shenyanming
  * @date 2018-12-28 14:20

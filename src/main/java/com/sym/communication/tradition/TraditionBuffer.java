@@ -1,7 +1,8 @@
-package com.sym.communication;
+package com.sym.communication.tradition;
 
 /**
- * 使用wait()+notifyAll()实现的缓冲区
+ * 传统线程通信, {@link Object#wait()}、{@link Object#notify()}、{@link Object#notifyAll()}.
+ * 模拟实现的缓冲区
  *
  * @author ym.shen
  * @date 2018-12-28 16:30
@@ -94,6 +95,4 @@ public class TraditionBuffer<T> {
             return (T)retObj;
         }
     }
-
-
 }
