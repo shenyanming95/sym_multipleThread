@@ -36,7 +36,7 @@
 package com.sym.juc.locks;
 
 import com.sym.juc.TimeUnit;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 /**
  * A capability-based lock with three modes for controlling read/write

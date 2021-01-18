@@ -57,10 +57,10 @@
  * a thread may block transiently before performing the operation.
  *
  * <p>Instances of classes
- * {@link juc.atomic.AtomicBoolean},
- * {@link juc.atomic.AtomicInteger},
- * {@link juc.atomic.AtomicLong}, and
- * {@link juc.atomic.AtomicReference}
+ * {@link com.sym.juc.atomic.AtomicBoolean},
+ * {@link com.sym.juc.atomic.AtomicInteger},
+ * {@link com.sym.juc.atomic.AtomicLong}, and
+ * {@link com.sym.juc.atomic.AtomicReference}
  * each provide access and updates to a single variable of the
  * corresponding type.  Each class also provides appropriate utility
  * methods for that type.  For example, classes {@code AtomicLong} and
@@ -130,9 +130,9 @@
  * {@code compareAndSet} operations on any selected {@code volatile}
  * field of any selected class.
  *
- * {@link juc.atomic.AtomicReferenceFieldUpdater},
- * {@link juc.atomic.AtomicIntegerFieldUpdater}, and
- * {@link juc.atomic.AtomicLongFieldUpdater} are
+ * {@link com.sym.juc.atomic.AtomicReferenceFieldUpdater},
+ * {@link com.sym.juc.atomic.AtomicIntegerFieldUpdater}, and
+ * {@link com.sym.juc.atomic.AtomicLongFieldUpdater} are
  * reflection-based utilities that provide access to the associated
  * field types.  These are mainly of use in atomic data structures in
  * which several {@code volatile} fields of the same node (for
@@ -143,9 +143,9 @@
  * guarantees.
  *
  * <p>The
- * {@link juc.atomic.AtomicIntegerArray},
- * {@link juc.atomic.AtomicLongArray}, and
- * {@link juc.atomic.AtomicReferenceArray} classes
+ * {@link com.sym.juc.atomic.AtomicIntegerArray},
+ * {@link com.sym.juc.atomic.AtomicLongArray}, and
+ * {@link com.sym.juc.atomic.AtomicReferenceArray} classes
  * further extend atomic operation support to arrays of these types.
  * These classes are also notable in providing {@code volatile} access
  * semantics for their array elements, which is not supported for
@@ -174,12 +174,12 @@
  * acceptable when, for example, updating performance statistics, but
  * rarely otherwise.
  *
- * <p>The {@link juc.atomic.AtomicMarkableReference}
+ * <p>The {@link com.sym.juc.atomic.AtomicMarkableReference}
  * class associates a single boolean with a reference.  For example, this
  * bit might be used inside a data structure to mean that the object
  * being referenced has logically been deleted.
  *
- * The {@link juc.atomic.AtomicStampedReference}
+ * The {@link com.sym.juc.atomic.AtomicStampedReference}
  * class associates an integer value with a reference.  This may be
  * used for example, to represent version numbers corresponding to
  * series of updates.

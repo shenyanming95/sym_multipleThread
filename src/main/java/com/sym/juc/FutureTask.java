@@ -37,7 +37,7 @@ package com.sym.juc;
 
 
 import com.sym.juc.locks.LockSupport;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 /**
  * A cancellable asynchronous computation.  This class provides a base

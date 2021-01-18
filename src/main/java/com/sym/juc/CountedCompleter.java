@@ -36,7 +36,7 @@
 package com.sym.juc;
 
 import com.sym.juc.atomic.AtomicReference;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 /**
  * A {@link ForkJoinTask} with a completion action performed when

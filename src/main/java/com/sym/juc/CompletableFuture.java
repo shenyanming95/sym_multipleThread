@@ -36,7 +36,7 @@
 package com.sym.juc;
 
 import com.sym.juc.locks.LockSupport;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;

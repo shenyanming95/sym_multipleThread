@@ -37,7 +37,7 @@ package com.sym.juc.locks;
 
 import com.sym.juc.Semaphore;
 import com.sym.juc.ThreadLocalRandom;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 import sun.misc.Unsafe;
 
 /**

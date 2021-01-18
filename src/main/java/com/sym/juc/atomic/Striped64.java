@@ -36,7 +36,7 @@
 package com.sym.juc.atomic;
 
 import com.sym.juc.ThreadLocalRandom;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.LongBinaryOperator;

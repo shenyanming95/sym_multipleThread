@@ -35,8 +35,9 @@
 
 package com.sym.juc.locks;
 
+import com.sym.juc.CountDownLatch;
 import com.sym.juc.TimeUnit;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 import sun.misc.Unsafe;
 
 import java.util.ArrayList;
@@ -257,7 +258,7 @@ import java.util.Date;
  * }}</pre>
  *
  * <p>Here is a latch class that is like a
- * {@link juc.CountDownLatch CountDownLatch}
+ * {@link CountDownLatch CountDownLatch}
  * except that it only requires a single {@code signal} to
  * fire. Because a latch is non-exclusive, it uses the {@code shared}
  * acquire and release methods.
@@ -289,11 +290,8 @@ import java.util.Date;
  * @since 1.5
  * @author Doug Lea
  */
-public abstract class AbstractQueuedSynchronizer
-    extends AbstractOwnableSynchronizer
-    implements java.io.Serializable {
-
-    private static final long serialVersionUID = 7373984972572414691L;
+@SuppressWarnings("DuplicatedCode")
+public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchronizer implements java.io.Serializable {
 
     /**
      * Creates a new {@code AbstractQueuedSynchronizer} instance
@@ -301,253 +299,66 @@ public abstract class AbstractQueuedSynchronizer
      */
     protected AbstractQueuedSynchronizer() { }
 
+    private static final long serialVersionUID = 7373984972572414691L;
+
     /**
-     * Wait queue node class.
-     *
-     * <p>The wait queue is a variant of a "CLH" (Craig, Landin, and
-     * Hagersten) lock queue. CLH locks are normally used for
-     * spinlocks.  We instead use them for blocking synchronizers, but
-     * use the same basic tactic of holding some of the control
-     * information about a thread in the predecessor of its node.  A
-     * "status" field in each node keeps track of whether a thread
-     * should block.  A node is signalled when its predecessor
-     * releases.  Each node of the queue otherwise serves as a
-     * specific-notification-style monitor holding a single waiting
-     * thread. The status field does NOT control whether threads are
-     * granted locks etc though.  A thread may try to acquire if it is
-     * first in the queue. But being first does not guarantee success;
-     * it only gives the right to contend.  So the currently released
-     * contender thread may need to rewait.
-     *
-     * <p>To enqueue into a CLH lock, you atomically splice it in as new
-     * tail. To dequeue, you just set the head field.
-     * <pre>
-     *      +------+  prev +-----+       +-----+
-     * head |      | <---- |     | <---- |     |  tail
-     *      +------+       +-----+       +-----+
-     * </pre>
-     *
-     * <p>Insertion into a CLH queue requires only a single atomic
-     * operation on "tail", so there is a simple atomic point of
-     * demarcation from unqueued to queued. Similarly, dequeuing
-     * involves only updating the "head". However, it takes a bit
-     * more work for nodes to determine who their successors are,
-     * in part to deal with possible cancellation due to timeouts
-     * and interrupts.
-     *
-     * <p>The "prev" links (not used in original CLH locks), are mainly
-     * needed to handle cancellation. If a node is cancelled, its
-     * successor is (normally) relinked to a non-cancelled
-     * predecessor. For explanation of similar mechanics in the case
-     * of spin locks, see the papers by Scott and Scherer at
-     * http://www.cs.rochester.edu/u/scott/synchronization/
-     *
-     * <p>We also use "next" links to implement blocking mechanics.
-     * The thread id for each node is kept in its own node, so a
-     * predecessor signals the next node to wake up by traversing
-     * next link to determine which thread it is.  Determination of
-     * successor must avoid races with newly queued nodes to set
-     * the "next" fields of their predecessors.  This is solved
-     * when necessary by checking backwards from the atomically
-     * updated "tail" when a node's successor appears to be null.
-     * (Or, said differently, the next-links are an optimization
-     * so that we don't usually need a backward scan.)
-     *
-     * <p>Cancellation introduces some conservatism to the basic
-     * algorithms.  Since we must poll for cancellation of other
-     * nodes, we can miss noticing whether a cancelled node is
-     * ahead or behind us. This is dealt with by always unparking
-     * successors upon cancellation, allowing them to stabilize on
-     * a new predecessor, unless we can identify an uncancelled
-     * predecessor who will carry this responsibility.
-     *
-     * <p>CLH queues need a dummy header node to get started. But
-     * we don't create them on construction, because it would be wasted
-     * effort if there is never contention. Instead, the node
-     * is constructed and head and tail pointers are set upon first
-     * contention.
-     *
-     * <p>Threads waiting on Conditions use the same nodes, but
-     * use an additional link. Conditions only need to link nodes
-     * in simple (non-concurrent) linked queues because they are
-     * only accessed when exclusively held.  Upon await, a node is
-     * inserted into a condition queue.  Upon signal, the node is
-     * transferred to the main queue.  A special value of status
-     * field is used to mark which queue a node is on.
-     *
-     * <p>Thanks go to Dave Dice, Mark Moir, Victor Luchangco, Bill
-     * Scherer and Michael Scott, along with members of JSR-166
-     * expert group, for helpful ideas, discussions, and critiques
-     * on the design of this class.
+     * The number of nanoseconds for which it is faster to spin
+     * rather than to use timed park. A rough estimate suffices
+     * to improve responsiveness with very short timeouts.
      */
-    static final class Node {
-        /** Marker to indicate a node is waiting in shared mode */
-        static final Node SHARED = new Node();
-        /** Marker to indicate a node is waiting in exclusive mode */
-        static final Node EXCLUSIVE = null;
+    static final long spinForTimeoutThreshold = 1000L;
 
-        /** waitStatus value to indicate thread has cancelled */
-        static final int CANCELLED =  1;
-        /** waitStatus value to indicate successor's thread needs unparking */
-        static final int SIGNAL    = -1;
-        /** waitStatus value to indicate thread is waiting on condition */
-        static final int CONDITION = -2;
-        /**
-         * waitStatus value to indicate the next acquireShared should
-         * unconditionally propagate
-         */
-        static final int PROPAGATE = -3;
+    /**
+     * Setup to support compareAndSet. We need to natively implement
+     * this here: For the sake of permitting future enhancements, we
+     * cannot explicitly subclass AtomicInteger, which would be
+     * efficient and useful otherwise. So, as the lesser of evils, we
+     * natively implement using hotspot intrinsics API. And while we
+     * are at it, we do the same for other CASable fields (which could
+     * otherwise be done with atomic field updaters).
+     */
+    private static final Unsafe unsafe = UnSafeUtil.getUnsafe();
+    private static final long stateOffset;
+    private static final long headOffset;
+    private static final long tailOffset;
+    private static final long waitStatusOffset;
+    private static final long nextOffset;
 
-        /**
-         * Status field, taking on only the values:
-         *   SIGNAL:     The successor of this node is (or will soon be)
-         *               blocked (via park), so the current node must
-         *               unpark its successor when it releases or
-         *               cancels. To avoid races, acquire methods must
-         *               first indicate they need a signal,
-         *               then retry the atomic acquire, and then,
-         *               on failure, block.
-         *   CANCELLED:  This node is cancelled due to timeout or interrupt.
-         *               Nodes never leave this state. In particular,
-         *               a thread with cancelled node never again blocks.
-         *   CONDITION:  This node is currently on a condition queue.
-         *               It will not be used as a sync queue node
-         *               until transferred, at which time the status
-         *               will be set to 0. (Use of this value here has
-         *               nothing to do with the other uses of the
-         *               field, but simplifies mechanics.)
-         *   PROPAGATE:  A releaseShared should be propagated to other
-         *               nodes. This is set (for head node only) in
-         *               doReleaseShared to ensure propagation
-         *               continues, even if other operations have
-         *               since intervened.
-         *   0:          None of the above
-         *
-         * The values are arranged numerically to simplify use.
-         * Non-negative values mean that a node doesn't need to
-         * signal. So, most code doesn't need to check for particular
-         * values, just for sign.
-         *
-         * The field is initialized to 0 for normal sync nodes, and
-         * CONDITION for condition nodes.  It is modified using CAS
-         * (or when possible, unconditional volatile writes).
-         */
-        volatile int waitStatus;
-
-        /**
-         * Link to predecessor node that current node/thread relies on
-         * for checking waitStatus. Assigned during enqueuing, and nulled
-         * out (for sake of GC) only upon dequeuing.  Also, upon
-         * cancellation of a predecessor, we short-circuit while
-         * finding a non-cancelled one, which will always exist
-         * because the head node is never cancelled: A node becomes
-         * head only as a result of successful acquire. A
-         * cancelled thread never succeeds in acquiring, and a thread only
-         * cancels itself, not any other node.
-         */
-        volatile Node prev;
-
-        /**
-         * Link to the successor node that the current node/thread
-         * unparks upon release. Assigned during enqueuing, adjusted
-         * when bypassing cancelled predecessors, and nulled out (for
-         * sake of GC) when dequeued.  The enq operation does not
-         * assign next field of a predecessor until after attachment,
-         * so seeing a null next field does not necessarily mean that
-         * node is at end of queue. However, if a next field appears
-         * to be null, we can scan prev's from the tail to
-         * double-check.  The next field of cancelled nodes is set to
-         * point to the node itself instead of null, to make life
-         * easier for isOnSyncQueue.
-         */
-        volatile Node next;
-
-        /**
-         * The thread that enqueued this node.  Initialized on
-         * construction and nulled out after use.
-         */
-        volatile Thread thread;
-
-        /**
-         * Link to next node waiting on condition, or the special
-         * value SHARED.  Because condition queues are accessed only
-         * when holding in exclusive mode, we just need a simple
-         * linked queue to hold nodes while they are waiting on
-         * conditions. They are then transferred to the queue to
-         * re-acquire. And because conditions can only be exclusive,
-         * we save a field by using special value to indicate shared
-         * mode.
-         */
-        Node nextWaiter;
-
-        /**
-         * Returns true if node is waiting in shared mode.
-         */
-        final boolean isShared() {
-            return nextWaiter == SHARED;
-        }
-
-        /**
-         * Returns previous node, or throws NullPointerException if null.
-         * Use when predecessor cannot be null.  The null check could
-         * be elided, but is present to help the VM.
-         *
-         * @return the predecessor of this node
-         */
-        final Node predecessor() throws NullPointerException {
-            Node p = prev;
-            if (p == null)
-                throw new NullPointerException();
-            else
-                return p;
-        }
-
-        Node() {    // Used to establish initial head or SHARED marker
-        }
-
-        Node(Thread thread, Node mode) {     // Used by addWaiter
-            this.nextWaiter = mode;
-            this.thread = thread;
-        }
-
-        Node(Thread thread, int waitStatus) { // Used by Condition
-            this.waitStatus = waitStatus;
-            this.thread = thread;
-        }
+    static {
+        try {
+            stateOffset = unsafe.objectFieldOffset(AbstractQueuedSynchronizer.class.getDeclaredField("state"));
+            headOffset = unsafe.objectFieldOffset(AbstractQueuedSynchronizer.class.getDeclaredField("head"));
+            tailOffset = unsafe.objectFieldOffset(AbstractQueuedSynchronizer.class.getDeclaredField("tail"));
+            waitStatusOffset = unsafe.objectFieldOffset(Node.class.getDeclaredField("waitStatus"));
+            nextOffset = unsafe.objectFieldOffset(Node.class.getDeclaredField("next"));
+        } catch (Exception ex) { throw new Error(ex); }
     }
 
     /**
-     * Head of the wait queue, lazily initialized.  Except for
-     * initialization, it is modified only via method setHead.  Note:
-     * If head exists, its waitStatus is guaranteed not to be
-     * CANCELLED.
+     * 等待队列的头节点(会被延迟初始化), 除了初始化它以外, 只能通过{@link #setHead(Node)}方法修改.
+     * 如果head存在, 那么它的成员变量{@code waitStatus}必须不能被置为{@code CANCELLED}状态
      */
     private transient volatile Node head;
 
     /**
-     * Tail of the wait queue, lazily initialized.  Modified only via
-     * method enq to add new wait node.
+     * 等待队列的尾节点(会被延迟初始化), 只能通过{@link #enq(Node)}方法修改以添加新的等待节点
      */
     private transient volatile Node tail;
 
     /**
-     * The synchronization state.
+     * 一个整型, 用来表示同步等待状态
      */
     private volatile int state;
 
     /**
-     * Returns the current value of synchronization state.
-     * This operation has memory semantics of a {@code volatile} read.
-     * @return current state value
+     * 返回同步状态{@code state}的当前值, 因为同步状态加了{@code volatile}, 所以可以得到它的最新值
      */
     protected final int getState() {
         return state;
     }
 
     /**
-     * Sets the value of synchronization state.
-     * This operation has memory semantics of a {@code volatile} write.
-     * @param newState the new state value
+     * 设置同步状态{@code state}的值, 因为同步状态加了{@code volatile}, 所以可以被其它线程可见
      */
     protected final void setState(int newState) {
         state = newState;
@@ -571,27 +382,28 @@ public abstract class AbstractQueuedSynchronizer
 
     // Queuing utilities
 
-    /**
-     * The number of nanoseconds for which it is faster to spin
-     * rather than to use timed park. A rough estimate suffices
-     * to improve responsiveness with very short timeouts.
-     */
-    static final long spinForTimeoutThreshold = 1000L;
+
 
     /**
-     * Inserts node into queue, initializing if necessary. See picture above.
-     * @param node the node to insert
+     * 将节点添加到同步等待队列中, 第一次入队时初始化队列.
+     * @param node 准备入队的节点
      * @return node's predecessor
      */
     private Node enq(final Node node) {
         for (;;) {
             Node t = tail;
-            if (t == null) { // Must initialize
+            // 若tail为空, 说明队列还没初始化,
+            // 当然多个线程肯定只有一个线程能真正执行初始化, 初始化成功后,
+            // 循环还不会终止, 会将自己添加到同步等待队列成功后, 才会退化循环.
+            if (t == null) {
                 if (compareAndSetHead(new Node()))
+                    // 通过CAS设置head节点, 设置成功, 更新tail指针
                     tail = head;
             } else {
+                // 队列不为空, tail节点作为待入队节点的前驱节点
                 node.prev = t;
                 if (compareAndSetTail(t, node)) {
+                    // 通过CAS设置尾节点, 设置成功, 原先尾节点的next就指向新的尾节点.
                     t.next = node;
                     return t;
                 }
@@ -600,14 +412,19 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
-     * Creates and enqueues node for current thread and given mode.
+     * 根据结点模式和当前线程信息创建出一个结点Node, 加入到AQS的CLH队列中
      *
-     * @param mode Node.EXCLUSIVE for exclusive, Node.SHARED for shared
-     * @return the new node
+     * @param mode Node.EXCLUSIVE用于独占锁, Node.SHARED用于共享锁
+     * @return 返回新节点
      */
     private Node addWaiter(Node mode) {
+        // 根据当前线程和给定模式，创建一个新的节点node
         Node node = new Node(Thread.currentThread(), mode);
-        // Try the fast path of enq; backup to full enq on failure
+
+        // 判断此AQS的CLH队列的尾结点tail是否为空，不为空则将新创建的节点入队，
+        // 使用compareAndSetTail()更新CLH队列的尾节点为新创建的节点.
+        // 这边提出来, 完全是因为在大部分情况下, 队列肯定已被初始化, 实际上下面这些代码
+        // 也会在enq()方法中体现.
         Node pred = tail;
         if (pred != null) {
             node.prev = pred;
@@ -616,6 +433,7 @@ public abstract class AbstractQueuedSynchronizer
                 return node;
             }
         }
+        // CLH队列为空，又或者，上面CAS更新尾节点失败的情况，都会执行enq()方法
         enq(node);
         return node;
     }
@@ -634,7 +452,7 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
-     * Wakes up node's successor, if one exists.
+     * 如果node的后继节点存在，唤醒它
      *
      * @param node the node
      */
@@ -654,6 +472,9 @@ public abstract class AbstractQueuedSynchronizer
          * traverse backwards from tail to find the actual
          * non-cancelled successor.
          */
+
+        // 将要unpark的线程在后继节点中保存，通常只是下一个节点。
+        // 但如果下一个节点被取消了 或者 显然为空，则从尾节点tail向前移动以找到实际未取消的后继节点
         Node s = node.next;
         if (s == null || s.waitStatus > 0) {
             s = null;
@@ -738,9 +559,9 @@ public abstract class AbstractQueuedSynchronizer
     // Utilities for various versions of acquire
 
     /**
-     * Cancels an ongoing attempt to acquire.
+     * 取消正在尝试获取锁资源的节点
      *
-     * @param node the node
+     * @param node 节点node, {@link #addWaiter(Node)}执行后的返回值
      */
     private void cancelAcquire(Node node) {
         // Ignore if node doesn't exist
@@ -749,7 +570,7 @@ public abstract class AbstractQueuedSynchronizer
 
         node.thread = null;
 
-        // Skip cancelled predecessors
+        // 过滤掉排在node之前的已被取消(waitStatus==1)的节点
         Node pred = node.prev;
         while (pred.waitStatus > 0)
             node.prev = pred = pred.prev;
@@ -757,6 +578,7 @@ public abstract class AbstractQueuedSynchronizer
         // predNext is the apparent node to unsplice. CASes below will
         // fail if not, in which case, we lost race vs another cancel
         // or signal, so no further action is necessary.
+        // 循环中止了, 说明pred的状态小于等于0, 它的后继结点pred.next就是状态大于0的结点
         Node predNext = pred.next;
 
         // Can use unconditional write instead of CAS here.
@@ -764,21 +586,29 @@ public abstract class AbstractQueuedSynchronizer
         // Before, we are free of interference from other threads.
         node.waitStatus = Node.CANCELLED;
 
-        // If we are the tail, remove ourselves.
+        // 若node正好是CLH队列的尾节点，就将node的前驱节点设置为新的尾节点tail
         if (node == tail && compareAndSetTail(node, pred)) {
+            // 设置成功后，将新的尾节点pred的后继节点值为空, 期望值为predNext, 更新值为null
             compareAndSetNext(pred, predNext, null);
         } else {
-            // If successor needs signal, try to set pred's next-link
-            // so it will get one. Otherwise wake it up to propagate.
+            // 如果node处在CLH队列的中间位置，将它的后继节点和前驱节点关联起来，自己移出队列唤醒node的后继节点
             int ws;
-            if (pred != head &&
-                ((ws = pred.waitStatus) == Node.SIGNAL ||
-                 (ws <= 0 && compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &&
-                pred.thread != null) {
+            // 这个if语句有3个判断：(注意此时局部变量pred是node节点的前驱节点)
+            // 第一，node的前驱节点pred，必须不为头结点head
+            // 第二，pred的waitStatus == -1或者 能成功修改为 -1
+            // 第三，pred包含的线程信息不能为空
+            if (pred != head
+                    && ((ws = pred.waitStatus) == Node.SIGNAL || (ws <= 0 && compareAndSetWaitStatus(pred, ws, Node.SIGNAL)))
+                    && pred.thread != null) {
+                // 将node节点的前驱和后继节点关联起来，自己退出CLH队列
                 Node next = node.next;
                 if (next != null && next.waitStatus <= 0)
                     compareAndSetNext(pred, predNext, next);
             } else {
+                // node前驱节点pred就是CLH队列的头结点（说明下一个就要唤醒node的后继节点）
+                // pred节点的waitStatus值不为 -1 ，且不能成功修改为 -1
+                // 前驱节点pred携带的线程信息被值为空了
+                // 满足上面任意一种情况，唤醒node的后继节点以便可以继续传播
                 unparkSuccessor(node);
             }
 
@@ -791,23 +621,23 @@ public abstract class AbstractQueuedSynchronizer
      * Returns true if thread should block. This is the main signal
      * control in all acquire loops.  Requires that pred == node.prev.
      *
-     * @param pred node's predecessor holding status
-     * @param node the node
-     * @return {@code true} if thread should block
+     * @param pred 节点node的前驱节点
+     * @param node 节点node, {@link #addWaiter(Node)}执行后的返回值
+     * @return {@code true} 如果当前线程可以被阻塞，返回true
      */
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+        // 获取前驱节点pred的等待状态，若waitStatus= -1 则意味着pred的后继节点，即node，可以被安全的挂机
         int ws = pred.waitStatus;
         if (ws == Node.SIGNAL)
             /*
-             * This node has already set status asking a release
-             * to signal it, so it can safely park.
+             * This node has already set status asking a release to signal it, so it can safely park.
              */
             return true;
+        // 如果waitStatus大于0（值为1），说明前驱节点pred所代表的线程已被取消，不会再竞争锁
         if (ws > 0) {
-            /*
-             * Predecessor was cancelled. Skip over predecessors and
-             * indicate retry.
-             */
+            // 这个循环的意思是：以前驱节点pred为基础，一直向队列头寻找，删除waitStatus=1
+            // 的节点.直至遇到waitStatus小于等于0的节点，并将它与node关联起来（成为前驱后继
+            // 关系）然后方法结束执行执行，返回false
             do {
                 node.prev = pred = pred.prev;
             } while (pred.waitStatus > 0);
@@ -818,6 +648,8 @@ public abstract class AbstractQueuedSynchronizer
              * need a signal, but don't park yet.  Caller will need to
              * retry to make sure it cannot acquire before parking.
              */
+            // 如果前驱节点pred的waitStatus既不等于-1，又不大于0，则使用CAS算法将其状态
+            // 更新为Node.SIGNAL 即值为-1。方法结束执行，返回false
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }
         return false;
@@ -835,7 +667,9 @@ public abstract class AbstractQueuedSynchronizer
      *
      * @return {@code true} if interrupted
      */
-    private final boolean parkAndCheckInterrupt() {
+    private boolean parkAndCheckInterrupt() {
+        // 调用LockSupport.park()将当前线程挂起，待唤醒后返回
+        // 当前线程的中断状态并且清除它的中断状态（注意它调用的是Thread.interrupted()方法）
         LockSupport.park(this);
         return Thread.interrupted();
     }
@@ -850,30 +684,39 @@ public abstract class AbstractQueuedSynchronizer
      */
 
     /**
-     * Acquires in exclusive uninterruptible mode for thread already in
-     * queue. Used by condition wait methods as well as acquire.
+     * 尝试获取锁资源, 如果获取不到, 判断当前线程能否被挂起等待, 如果可以则立即挂起; 如果不行,
+     * 则以自旋的方式不间断获取锁
      *
-     * @param node the node
-     * @param arg the acquire argument
-     * @return {@code true} if interrupted while waiting
+     * @param node 当前线程新创建的节点, {@link #addWaiter(Node)}执行后的返回值
+     * @param arg 申请资源的参数, 默认值为1
+     * @return {@code true} 如果线程在等待期间被中断了, 返回true
      */
     final boolean acquireQueued(final Node node, int arg) {
         boolean failed = true;
         try {
             boolean interrupted = false;
+            // 以自旋的方式
             for (;;) {
+                // 获取节点node的前驱节点
                 final Node p = node.predecessor();
+                // 若前驱节点p就是CLH队列的头结点head，则再次调用tryAcquire()尝试获取锁
                 if (p == head && tryAcquire(arg)) {
+                    // 获取到锁后，就清空节点node的线程信息和前驱节点，将其设置为新的头结点
                     setHead(node);
                     p.next = null; // help GC
                     failed = false;
                     return interrupted;
                 }
-                if (shouldParkAfterFailedAcquire(p, node) &&
-                    parkAndCheckInterrupt())
+                // 如果node的前驱节点不是头结点，或者又再次没有抢到锁，先执行
+                // shouldParkAfterFailedAcquire()判断节点node代表的线程是否可以被挂起，若返回false则直接以自旋方式重新执行一遍；
+                // 若返回true则执行parkAndCheckInterrupt()将当前线程挂起，当被挂起的线程重新唤醒后，会以自旋方式接着执行一遍，
+                // 直到获取锁或抛出异常
+                if (shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt()){
                     interrupted = true;
+                }
             }
         } finally {
+            // 如果跳出上面的死循环，但是failed变量未被改变，说明是由于异常而跳出循环
             if (failed)
                 cancelAcquire(node);
         }
@@ -896,8 +739,7 @@ public abstract class AbstractQueuedSynchronizer
                     failed = false;
                     return;
                 }
-                if (shouldParkAfterFailedAcquire(p, node) &&
-                    parkAndCheckInterrupt())
+                if (shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt())
                     throw new InterruptedException();
             }
         } finally {
@@ -1198,8 +1040,10 @@ public abstract class AbstractQueuedSynchronizer
      *        can represent anything you like.
      */
     public final void acquire(int arg) {
-        if (!tryAcquire(arg) &&
-            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        // 先调用tryAcquire方法尝试获取锁 （方法由子类来定义, 也就是说能不能获取到锁, 话语权交予子类）
+        // 如果可以获取锁返回true, 那么acquire()方法就结束;
+        // 如果获取不到锁, 创建一个新节点, 将其加入到此AQS的等待队列中.
+        if (!tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
             selfInterrupt();
     }
 
@@ -1815,6 +1659,228 @@ public abstract class AbstractQueuedSynchronizer
         return condition.getWaitingThreads();
     }
 
+    /* CAS方法相关 */
+
+    /**
+     * CAS 设置等待队列的头结点{@code head}, 只用于{@link #enq(Node)}
+     */
+    private boolean compareAndSetHead(Node update) {
+        return unsafe.compareAndSwapObject(this, headOffset, null, update);
+    }
+
+    /**
+     * CAS设置等待队列的尾节点{@code tail}, 只用于{@link #enq(Node)}
+     */
+    private boolean compareAndSetTail(Node expect, Node update) {
+        return unsafe.compareAndSwapObject(this, tailOffset, expect, update);
+    }
+
+    /**
+     * CAS设置节点{@link Node}的{@code waitStatus}字段
+     */
+    private static boolean compareAndSetWaitStatus(Node node, int expect, int update) {
+        return unsafe.compareAndSwapInt(node, waitStatusOffset, expect, update);
+    }
+
+    /**
+     * CAS设置{@link Node}的{@code next}字段
+     */
+    private static boolean compareAndSetNext(Node node, Node expect, Node update) {
+        return unsafe.compareAndSwapObject(node, nextOffset, expect, update);
+    }
+
+    /**
+     * Wait queue node class.
+     *
+     * <p>The wait queue is a variant of a "CLH" (Craig, Landin, and
+     * Hagersten) lock queue. CLH locks are normally used for
+     * spinlocks.  We instead use them for blocking synchronizers, but
+     * use the same basic tactic of holding some of the control
+     * information about a thread in the predecessor of its node.  A
+     * "status" field in each node keeps track of whether a thread
+     * should block.  A node is signalled when its predecessor
+     * releases.  Each node of the queue otherwise serves as a
+     * specific-notification-style monitor holding a single waiting
+     * thread. The status field does NOT control whether threads are
+     * granted locks etc though.  A thread may try to acquire if it is
+     * first in the queue. But being first does not guarantee success;
+     * it only gives the right to contend.  So the currently released
+     * contender thread may need to rewait.
+     *
+     * <p>To enqueue into a CLH lock, you atomically splice it in as new
+     * tail. To dequeue, you just set the head field.
+     * <pre>
+     *      +------+  prev +-----+       +-----+
+     * head |      | <---- |     | <---- |     |  tail
+     *      +------+       +-----+       +-----+
+     * </pre>
+     *
+     * <p>Insertion into a CLH queue requires only a single atomic
+     * operation on "tail", so there is a simple atomic point of
+     * demarcation from unqueued to queued. Similarly, dequeuing
+     * involves only updating the "head". However, it takes a bit
+     * more work for nodes to determine who their successors are,
+     * in part to deal with possible cancellation due to timeouts
+     * and interrupts.
+     *
+     * <p>The "prev" links (not used in original CLH locks), are mainly
+     * needed to handle cancellation. If a node is cancelled, its
+     * successor is (normally) relinked to a non-cancelled
+     * predecessor. For explanation of similar mechanics in the case
+     * of spin locks, see the papers by Scott and Scherer at
+     * http://www.cs.rochester.edu/u/scott/synchronization/
+     *
+     * <p>We also use "next" links to implement blocking mechanics.
+     * The thread id for each node is kept in its own node, so a
+     * predecessor signals the next node to wake up by traversing
+     * next link to determine which thread it is.  Determination of
+     * successor must avoid races with newly queued nodes to set
+     * the "next" fields of their predecessors.  This is solved
+     * when necessary by checking backwards from the atomically
+     * updated "tail" when a node's successor appears to be null.
+     * (Or, said differently, the next-links are an optimization
+     * so that we don't usually need a backward scan.)
+     *
+     * <p>Cancellation introduces some conservatism to the basic
+     * algorithms.  Since we must poll for cancellation of other
+     * nodes, we can miss noticing whether a cancelled node is
+     * ahead or behind us. This is dealt with by always unparking
+     * successors upon cancellation, allowing them to stabilize on
+     * a new predecessor, unless we can identify an uncancelled
+     * predecessor who will carry this responsibility.
+     *
+     * <p>CLH queues need a dummy header node to get started. But
+     * we don't create them on construction, because it would be wasted
+     * effort if there is never contention. Instead, the node
+     * is constructed and head and tail pointers are set upon first
+     * contention.
+     *
+     * <p>Threads waiting on Conditions use the same nodes, but
+     * use an additional link. Conditions only need to link nodes
+     * in simple (non-concurrent) linked queues because they are
+     * only accessed when exclusively held.  Upon await, a node is
+     * inserted into a condition queue.  Upon signal, the node is
+     * transferred to the main queue.  A special value of status
+     * field is used to mark which queue a node is on.
+     *
+     * <p>Thanks go to Dave Dice, Mark Moir, Victor Luchangco, Bill
+     * Scherer and Michael Scott, along with members of JSR-166
+     * expert group, for helpful ideas, discussions, and critiques
+     * on the design of this class.
+     */
+    static final class Node {
+
+        // 用于表示节点处于共享模式下
+        static final Node SHARED = new Node();
+        // 用于表示节点处于独占模式下
+        static final Node EXCLUSIVE = null;
+
+        // waitStatus值，表示线程已取消
+        static final int CANCELLED =  1;
+        // waitStatus值，表示该节点的下一个节点代表的线程, 需要执行unParking（被唤醒）
+        static final int SIGNAL    = -1;
+        // waitStatus值, 表示这个节点代表的线程正处于 Condition 条件等待
+        static final int CONDITION = -2;
+        // waitStatus值，表示下一个acquireShared应该无条件传播
+        static final int PROPAGATE = -3;
+
+        /**
+         * 节点的状态值, 可以有5种取值（上面四种 + 默认值0）
+         * 对于常规同步节点, 该字段初始化为0; 对于条件节点, 该字段初始化为CONDITION. 使用CAS对其进行修改
+         *
+         * ⑴ SIGNAL:    值为-1, 表示当前节点的后继节点已经（或者即将）被阻塞, 因此当前节点释放或取消时
+         *               必须唤醒（unPark）它的后继节点. 为了避免竞争, 申请锁的方法需要原子重试, 然后在失败时阻塞;
+         *
+         * ⑵ CANCELLED: 值为1, 表示当前节点由于超时或者被中断（interrupt）而取消申请锁, 一旦节点设置成这个状态,
+         *               就不会再被更改, 具有取消状态的节点的线程永远不会再次阻塞;
+         *
+         * ⑶ CONDITION: 值为-2, 表示当期那节点处于条件队列, 在传输之前, 此节点不会用作同步队列节点, 此时状态将设置为0;
+         *
+         * ⑷ PROPAGATE: 值为-3, 表示 releaseShared 应该传播到其他节点. 在doReleaseShared中对此进行了设置（仅适用于头节点）,
+         *               以确保传播继续进行, 即使此后进行了其他操作;
+         *
+         * ⑸ 0: None of the above
+         */
+        volatile int waitStatus;
+
+        /**
+         * Link to predecessor node that current node/thread relies on
+         * for checking waitStatus. Assigned during enqueuing, and nulled
+         * out (for sake of GC) only upon dequeuing.  Also, upon
+         * cancellation of a predecessor, we short-circuit while
+         * finding a non-cancelled one, which will always exist
+         * because the head node is never cancelled: A node becomes
+         * head only as a result of successful acquire. A
+         * cancelled thread never succeeds in acquiring, and a thread only
+         * cancels itself, not any other node.
+         */
+        volatile Node prev;
+
+        /**
+         * Link to the successor node that the current node/thread
+         * unparks upon release. Assigned during enqueuing, adjusted
+         * when bypassing cancelled predecessors, and nulled out (for
+         * sake of GC) when dequeued.  The enq operation does not
+         * assign next field of a predecessor until after attachment,
+         * so seeing a null next field does not necessarily mean that
+         * node is at end of queue. However, if a next field appears
+         * to be null, we can scan prev's from the tail to
+         * double-check.  The next field of cancelled nodes is set to
+         * point to the node itself instead of null, to make life
+         * easier for isOnSyncQueue.
+         */
+        volatile Node next;
+
+        /**
+         * The thread that enqueued this node.  Initialized on
+         * construction and nulled out after use.
+         */
+        volatile Thread thread;
+
+        /**
+         * Link to next node waiting on condition, or the special
+         * value SHARED.  Because condition queues are accessed only
+         * when holding in exclusive mode, we just need a simple
+         * linked queue to hold nodes while they are waiting on
+         * conditions. They are then transferred to the queue to
+         * re-acquire. And because conditions can only be exclusive,
+         * we save a field by using special value to indicate shared
+         * mode.
+         */
+        Node nextWaiter;
+
+        /**
+         * 如果一个节点的{@code nextWaiter}等于{@code SHARED}, 就表示它处于共享模式下
+         */
+        final boolean isShared() {
+            return nextWaiter == SHARED;
+        }
+
+        /**
+         * 返回当前节点的前驱节点, 当前驱节点为null时, 抛出空指针异常
+         */
+        final Node predecessor() throws NullPointerException {
+            Node p = prev;
+            if (p == null)
+                throw new NullPointerException();
+            else
+                return p;
+        }
+
+        Node() {    // Used to establish initial head or SHARED marker
+        }
+
+        Node(Thread thread, Node mode) {     // Used by addWaiter
+            this.nextWaiter = mode;
+            this.thread = thread;
+        }
+
+        Node(Thread thread, int waitStatus) { // Used by Condition
+            this.waitStatus = waitStatus;
+            this.thread = thread;
+        }
+    }
+
     /**
      * Condition implementation for a {@link
      * AbstractQueuedSynchronizer} serving as the basis of a {@link
@@ -1876,7 +1942,7 @@ public abstract class AbstractQueuedSynchronizer
                     lastWaiter = null;
                 first.nextWaiter = null;
             } while (!transferForSignal(first) &&
-                     (first = firstWaiter) != null);
+                    (first = firstWaiter) != null);
         }
 
         /**
@@ -2003,8 +2069,8 @@ public abstract class AbstractQueuedSynchronizer
          */
         private int checkInterruptWhileWaiting(Node node) {
             return Thread.interrupted() ?
-                (transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT) :
-                0;
+                    (transferAfterCancelledWait(node) ? THROW_IE : REINTERRUPT) :
+                    0;
         }
 
         /**
@@ -2012,7 +2078,7 @@ public abstract class AbstractQueuedSynchronizer
          * does nothing, depending on mode.
          */
         private void reportInterruptAfterWait(int interruptMode)
-            throws InterruptedException {
+                throws InterruptedException {
             if (interruptMode == THROW_IE)
                 throw new InterruptedException();
             else if (interruptMode == REINTERRUPT)
@@ -2249,70 +2315,5 @@ public abstract class AbstractQueuedSynchronizer
             }
             return list;
         }
-    }
-
-    /**
-     * Setup to support compareAndSet. We need to natively implement
-     * this here: For the sake of permitting future enhancements, we
-     * cannot explicitly subclass AtomicInteger, which would be
-     * efficient and useful otherwise. So, as the lesser of evils, we
-     * natively implement using hotspot intrinsics API. And while we
-     * are at it, we do the same for other CASable fields (which could
-     * otherwise be done with atomic field updaters).
-     */
-    private static final Unsafe unsafe = UnSafeUtil.getUnsafe();
-    private static final long stateOffset;
-    private static final long headOffset;
-    private static final long tailOffset;
-    private static final long waitStatusOffset;
-    private static final long nextOffset;
-
-    static {
-        try {
-            stateOffset = unsafe.objectFieldOffset
-                (AbstractQueuedSynchronizer.class.getDeclaredField("state"));
-            headOffset = unsafe.objectFieldOffset
-                (AbstractQueuedSynchronizer.class.getDeclaredField("head"));
-            tailOffset = unsafe.objectFieldOffset
-                (AbstractQueuedSynchronizer.class.getDeclaredField("tail"));
-            waitStatusOffset = unsafe.objectFieldOffset
-                (Node.class.getDeclaredField("waitStatus"));
-            nextOffset = unsafe.objectFieldOffset
-                (Node.class.getDeclaredField("next"));
-
-        } catch (Exception ex) { throw new Error(ex); }
-    }
-
-    /**
-     * CAS head field. Used only by enq.
-     */
-    private final boolean compareAndSetHead(Node update) {
-        return unsafe.compareAndSwapObject(this, headOffset, null, update);
-    }
-
-    /**
-     * CAS tail field. Used only by enq.
-     */
-    private final boolean compareAndSetTail(Node expect, Node update) {
-        return unsafe.compareAndSwapObject(this, tailOffset, expect, update);
-    }
-
-    /**
-     * CAS waitStatus field of a node.
-     */
-    private static final boolean compareAndSetWaitStatus(Node node,
-                                                         int expect,
-                                                         int update) {
-        return unsafe.compareAndSwapInt(node, waitStatusOffset,
-                                        expect, update);
-    }
-
-    /**
-     * CAS next field of a node.
-     */
-    private static final boolean compareAndSetNext(Node node,
-                                                   Node expect,
-                                                   Node update) {
-        return unsafe.compareAndSwapObject(node, nextOffset, expect, update);
     }
 }

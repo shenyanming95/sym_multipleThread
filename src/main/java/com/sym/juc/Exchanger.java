@@ -36,7 +36,7 @@
 
 package com.sym.juc;
 
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 /**
  * A synchronization point at which threads can pair and swap elements

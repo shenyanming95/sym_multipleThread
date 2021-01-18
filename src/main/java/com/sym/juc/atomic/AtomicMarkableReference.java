@@ -35,7 +35,7 @@
 
 package com.sym.juc.atomic;
 
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 /**
  * An {@code AtomicMarkableReference} maintains an object reference

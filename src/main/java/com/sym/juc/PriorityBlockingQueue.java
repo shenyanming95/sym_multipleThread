@@ -37,7 +37,7 @@ package com.sym.juc;
 
 import com.sym.juc.locks.Condition;
 import com.sym.juc.locks.ReentrantLock;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 import java.util.AbstractQueue;
 import java.util.Arrays;

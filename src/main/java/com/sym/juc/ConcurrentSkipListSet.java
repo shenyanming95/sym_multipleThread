@@ -36,7 +36,7 @@
 package com.sym.juc;
 
 
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 import java.util.AbstractSet;
 import java.util.Collection;

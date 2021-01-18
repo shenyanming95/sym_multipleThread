@@ -37,7 +37,7 @@ package com.sym.juc;
 
 import com.sym.juc.atomic.AtomicInteger;
 import com.sym.juc.atomic.AtomicLong;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 import java.io.ObjectStreamField;
 import java.util.Random;

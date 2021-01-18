@@ -39,7 +39,7 @@ import com.sym.juc.atomic.AtomicReference;
 import com.sym.juc.atomic.LongAdder;
 import com.sym.juc.locks.LockSupport;
 import com.sym.juc.locks.ReentrantLock;
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 import java.io.ObjectStreamField;
 import java.io.Serializable;

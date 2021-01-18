@@ -35,7 +35,7 @@
 
 package com.sym.juc;
 
-import com.sym.unsafe.UnSafeUtil;
+import com.sym.util.UnSafeUtil;
 
 import java.io.Serializable;
 import java.util.AbstractCollection;

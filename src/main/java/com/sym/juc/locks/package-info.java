@@ -39,20 +39,20 @@
  * monitors.  The framework permits much greater flexibility in the use of
  * locks and conditions, at the expense of more awkward syntax.
  *
- * <p>The {@link juc.locks.Lock} interface supports
+ * <p>The {@link com.sym.juc.locks.Lock} interface supports
  * locking disciplines that differ in semantics (reentrant, fair, etc),
  * and that can be used in non-block-structured contexts including
  * hand-over-hand and lock reordering algorithms.  The main implementation
- * is {@link juc.locks.ReentrantLock}.
+ * is {@link com.sym.juc.locks.ReentrantLock}.
  *
- * <p>The {@link juc.locks.ReadWriteLock} interface
+ * <p>The {@link com.sym.juc.locks.ReadWriteLock} interface
  * similarly defines locks that may be shared among readers but are
  * exclusive to writers.  Only a single implementation, {@link
- * juc.locks.ReentrantReadWriteLock}, is provided, since
+ * com.sym.juc.locks.ReentrantReadWriteLock}, is provided, since
  * it covers most standard usage contexts.  But programmers may create
  * their own implementations to cover nonstandard requirements.
  *
- * <p>The {@link juc.locks.Condition} interface
+ * <p>The {@link com.sym.juc.locks.Condition} interface
  * describes condition variables that may be associated with Locks.
  * These are similar in usage to the implicit monitors accessed using
  * {@code Object.wait}, but offer extended capabilities.
@@ -61,15 +61,15 @@
  * names of {@code Condition} methods are different from the
  * corresponding {@code Object} versions.
  *
- * <p>The {@link juc.locks.AbstractQueuedSynchronizer}
+ * <p>The {@link com.sym.juc.locks.AbstractQueuedSynchronizer}
  * class serves as a useful superclass for defining locks and other
  * synchronizers that rely on queuing blocked threads.  The {@link
- * juc.locks.AbstractQueuedLongSynchronizer} class
+ * com.sym.juc.locks.AbstractQueuedLongSynchronizer} class
  * provides the same functionality but extends support to 64 bits of
  * synchronization state.  Both extend class {@link
- * juc.locks.AbstractOwnableSynchronizer}, a simple
+ * com.sym.juc.locks.AbstractOwnableSynchronizer}, a simple
  * class that helps record the thread currently holding exclusive
- * synchronization.  The {@link juc.locks.LockSupport}
+ * synchronization.  The {@link com.sym.juc.locks.LockSupport}
  * class provides lower-level blocking and unblocking support that is
  * useful for those developers implementing their own customized lock
  * classes.
