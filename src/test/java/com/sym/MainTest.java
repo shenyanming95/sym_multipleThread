@@ -1,7 +1,6 @@
 package com.sym;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
 
 /**
  * @author shenyanming
@@ -9,10 +8,7 @@ import org.junit.Test;
  */
 @Slf4j
 public class MainTest {
-
-    @Test
-    public void test01() {
+    public static void main(String[] args) {
 
     }
-
 }
