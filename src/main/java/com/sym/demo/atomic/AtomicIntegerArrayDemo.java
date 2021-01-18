@@ -1,7 +1,5 @@
 package com.sym.demo.atomic;
 
-import org.junit.Test;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
