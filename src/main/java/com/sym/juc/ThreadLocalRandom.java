@@ -36,12 +36,12 @@
 package com.sym.juc;
 
 import com.sym.juc.atomic.AtomicInteger;
-import com.sym.juc.atomic.AtomicLong;
 import com.sym.util.UnSafeUtil;
 
 import java.io.ObjectStreamField;
 import java.util.Random;
 import java.util.Spliterator;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.DoubleConsumer;
 import java.util.function.IntConsumer;
 import java.util.function.LongConsumer;
