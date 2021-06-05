@@ -1,3 +1,6 @@
-## Java并发编程: 原子性, 有序性, 可见性 ~
-![](./src/main/resources/java并发编程实战.jpg)
+![](./logo.png)
 
+## Java并发编程
+- disruptor：高性能队列 Disruptor 源码分析
+- juc：Java 并发包源码分析
+- self：并发编程实现与设计
