@@ -12,6 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * 单消费者并行消费.
+ *
  * @author shenyanming
  * Created on 2021/6/8 09:12
  */

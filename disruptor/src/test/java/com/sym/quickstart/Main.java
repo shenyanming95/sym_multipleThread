@@ -11,10 +11,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * disruptor简单示例.
+ *
  * @author shenyanming
  * Created on 2021/6/6 10:01.
  */
-
 public class Main {
 
     public static void main(String[] args) {
