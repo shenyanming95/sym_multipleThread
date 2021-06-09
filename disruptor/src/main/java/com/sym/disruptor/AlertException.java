@@ -1,18 +1,3 @@
-/*
- * Copyright 2011 LMAX Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.sym.disruptor;
 
 /**
@@ -21,8 +6,7 @@ package com.sym.disruptor;
  * It does not fill in a stack trace for performance reasons.
  */
 @SuppressWarnings("serial")
-public final class AlertException extends Exception
-{
+public final class AlertException extends Exception {
     /**
      * Pre-allocated exception to avoid garbage generation
      */
@@ -31,8 +15,7 @@ public final class AlertException extends Exception
     /**
      * Private constructor so only a single instance exists.
      */
-    private AlertException()
-    {
+    private AlertException() {
     }
 
     /**
@@ -41,8 +24,7 @@ public final class AlertException extends Exception
      * @return this instance.
      */
     @Override
-    public Throwable fillInStackTrace()
-    {
+    public Throwable fillInStackTrace() {
         return this;
     }
 }

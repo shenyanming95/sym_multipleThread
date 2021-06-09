@@ -15,7 +15,6 @@
  */
 package com.sym.disruptor;
 
-public interface EventReleaser
-{
+public interface EventReleaser {
     void release();
 }

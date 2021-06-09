@@ -15,7 +15,6 @@
  */
 package com.sym.disruptor;
 
-public interface DataProvider<T>
-{
+public interface DataProvider<T> {
     T get(long sequence);
 }

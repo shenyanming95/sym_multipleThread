@@ -1,7 +1,6 @@
 package com.sym.disruptor;
 
-public interface EventSink<E>
-{
+public interface EventSink<E> {
     /**
      * Publishes an event to the ring buffer.  It handles
      * claiming the next sequence, getting the current (uninitialised)
@@ -28,7 +27,7 @@ public interface EventSink<E>
     /**
      * Allows one user supplied argument.
      *
-     * @param <A> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @see #publishEvent(EventTranslator)
@@ -38,7 +37,7 @@ public interface EventSink<E>
     /**
      * Allows one user supplied argument.
      *
-     * @param <A> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @return true if the value was published, false if there was insufficient
@@ -50,8 +49,8 @@ public interface EventSink<E>
     /**
      * Allows two user supplied arguments.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
@@ -62,8 +61,8 @@ public interface EventSink<E>
     /**
      * Allows two user supplied arguments.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
@@ -76,9 +75,9 @@ public interface EventSink<E>
     /**
      * Allows three user supplied arguments
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
-     * @param <C> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
+     * @param <C>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
@@ -90,9 +89,9 @@ public interface EventSink<E>
     /**
      * Allows three user supplied arguments
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
-     * @param <C> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
+     * @param <C>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
@@ -186,7 +185,7 @@ public interface EventSink<E>
     /**
      * Allows one user supplied argument per event.
      *
-     * @param <A> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @see #publishEvents(EventTranslator[])
@@ -196,7 +195,7 @@ public interface EventSink<E>
     /**
      * Allows one user supplied argument per event.
      *
-     * @param <A> Class of the user supplied argument
+     * @param <A>           Class of the user supplied argument
      * @param translator    The user specified translation for each event
      * @param batchStartsAt The first element of the array which is within the batch.
      * @param batchSize     The actual size of the batch
@@ -208,7 +207,7 @@ public interface EventSink<E>
     /**
      * Allows one user supplied argument.
      *
-     * @param <A> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
      * @param translator The user specified translation for each event
      * @param arg0       An array of user supplied arguments, one element per event.
      * @return true if the value was published, false if there was insufficient
@@ -220,7 +219,7 @@ public interface EventSink<E>
     /**
      * Allows one user supplied argument.
      *
-     * @param <A> Class of the user supplied argument
+     * @param <A>           Class of the user supplied argument
      * @param translator    The user specified translation for each event
      * @param batchStartsAt The first element of the array which is within the batch.
      * @param batchSize     The actual size of the batch
@@ -234,8 +233,8 @@ public interface EventSink<E>
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       An array of user supplied arguments, one element per event.
      * @param arg1       An array of user supplied arguments, one element per event.
@@ -246,8 +245,8 @@ public interface EventSink<E>
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
+     * @param <A>           Class of the user supplied argument
+     * @param <B>           Class of the user supplied argument
      * @param translator    The user specified translation for the event
      * @param batchStartsAt The first element of the array which is within the batch.
      * @param batchSize     The actual size of the batch.
@@ -260,8 +259,8 @@ public interface EventSink<E>
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       An array of user supplied arguments, one element per event.
      * @param arg1       An array of user supplied arguments, one element per event.
@@ -274,8 +273,8 @@ public interface EventSink<E>
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
+     * @param <A>           Class of the user supplied argument
+     * @param <B>           Class of the user supplied argument
      * @param translator    The user specified translation for the event
      * @param batchStartsAt The first element of the array which is within the batch.
      * @param batchSize     The actual size of the batch.
@@ -290,9 +289,9 @@ public interface EventSink<E>
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
-     * @param <C> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
+     * @param <C>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       An array of user supplied arguments, one element per event.
      * @param arg1       An array of user supplied arguments, one element per event.
@@ -304,9 +303,9 @@ public interface EventSink<E>
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
-     * @param <C> Class of the user supplied argument
+     * @param <A>           Class of the user supplied argument
+     * @param <B>           Class of the user supplied argument
+     * @param <C>           Class of the user supplied argument
      * @param translator    The user specified translation for the event
      * @param batchStartsAt The first element of the array which is within the batch.
      * @param batchSize     The number of elements in the batch.
@@ -320,9 +319,9 @@ public interface EventSink<E>
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
-     * @param <C> Class of the user supplied argument
+     * @param <A>        Class of the user supplied argument
+     * @param <B>        Class of the user supplied argument
+     * @param <C>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       An array of user supplied arguments, one element per event.
      * @param arg1       An array of user supplied arguments, one element per event.
@@ -336,9 +335,9 @@ public interface EventSink<E>
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A> Class of the user supplied argument
-     * @param <B> Class of the user supplied argument
-     * @param <C> Class of the user supplied argument
+     * @param <A>           Class of the user supplied argument
+     * @param <B>           Class of the user supplied argument
+     * @param <C>           Class of the user supplied argument
      * @param translator    The user specified translation for the event
      * @param batchStartsAt The first element of the array which is within the batch.
      * @param batchSize     The actual size of the batch.

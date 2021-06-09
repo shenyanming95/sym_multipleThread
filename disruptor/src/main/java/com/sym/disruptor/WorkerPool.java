@@ -1,18 +1,3 @@
-/*
- * Copyright 2011 LMAX Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.sym.disruptor;
 
 import com.sym.disruptor.util.Util;
@@ -26,8 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @param <T> event to be processed by a pool of workers
  */
-public final class WorkerPool<T>
-{
+public final class WorkerPool<T> {
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final Sequence workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
     private final RingBuffer<T> ringBuffer;
@@ -47,23 +31,21 @@ public final class WorkerPool<T>
      */
     @SafeVarargs
     public WorkerPool(
-        final RingBuffer<T> ringBuffer,
-        final SequenceBarrier sequenceBarrier,
-        final ExceptionHandler<? super T> exceptionHandler,
-        final WorkHandler<? super T>... workHandlers)
-    {
+            final RingBuffer<T> ringBuffer,
+            final SequenceBarrier sequenceBarrier,
+            final ExceptionHandler<? super T> exceptionHandler,
+            final WorkHandler<? super T>... workHandlers) {
         this.ringBuffer = ringBuffer;
         final int numWorkers = workHandlers.length;
         workProcessors = new WorkProcessor[numWorkers];
 
-        for (int i = 0; i < numWorkers; i++)
-        {
+        for (int i = 0; i < numWorkers; i++) {
             workProcessors[i] = new WorkProcessor<>(
-                ringBuffer,
-                sequenceBarrier,
-                workHandlers[i],
-                exceptionHandler,
-                workSequence);
+                    ringBuffer,
+                    sequenceBarrier,
+                    workHandlers[i],
+                    exceptionHandler,
+                    workSequence);
         }
     }
 
@@ -78,23 +60,21 @@ public final class WorkerPool<T>
      */
     @SafeVarargs
     public WorkerPool(
-        final EventFactory<T> eventFactory,
-        final ExceptionHandler<? super T> exceptionHandler,
-        final WorkHandler<? super T>... workHandlers)
-    {
+            final EventFactory<T> eventFactory,
+            final ExceptionHandler<? super T> exceptionHandler,
+            final WorkHandler<? super T>... workHandlers) {
         ringBuffer = RingBuffer.createMultiProducer(eventFactory, 1024, new BlockingWaitStrategy());
         final SequenceBarrier barrier = ringBuffer.newBarrier();
         final int numWorkers = workHandlers.length;
         workProcessors = new WorkProcessor[numWorkers];
 
-        for (int i = 0; i < numWorkers; i++)
-        {
+        for (int i = 0; i < numWorkers; i++) {
             workProcessors[i] = new WorkProcessor<>(
-                ringBuffer,
-                barrier,
-                workHandlers[i],
-                exceptionHandler,
-                workSequence);
+                    ringBuffer,
+                    barrier,
+                    workHandlers[i],
+                    exceptionHandler,
+                    workSequence);
         }
 
         ringBuffer.addGatingSequences(getWorkerSequences());
@@ -105,11 +85,9 @@ public final class WorkerPool<T>
      *
      * @return an array of {@link Sequence}s representing the progress of the workers.
      */
-    public Sequence[] getWorkerSequences()
-    {
+    public Sequence[] getWorkerSequences() {
         final Sequence[] sequences = new Sequence[workProcessors.length + 1];
-        for (int i = 0, size = workProcessors.length; i < size; i++)
-        {
+        for (int i = 0, size = workProcessors.length; i < size; i++) {
             sequences[i] = workProcessors[i].getSequence();
         }
         sequences[sequences.length - 1] = workSequence;
@@ -124,18 +102,15 @@ public final class WorkerPool<T>
      * @return the {@link RingBuffer} used for the work queue.
      * @throws IllegalStateException if the pool has already been started and not halted yet
      */
-    public RingBuffer<T> start(final Executor executor)
-    {
-        if (!started.compareAndSet(false, true))
-        {
+    public RingBuffer<T> start(final Executor executor) {
+        if (!started.compareAndSet(false, true)) {
             throw new IllegalStateException("WorkerPool has already been started and cannot be restarted until halted.");
         }
 
         final long cursor = ringBuffer.getCursor();
         workSequence.set(cursor);
 
-        for (WorkProcessor<?> processor : workProcessors)
-        {
+        for (WorkProcessor<?> processor : workProcessors) {
             processor.getSequence().set(cursor);
             executor.execute(processor);
         }
@@ -146,16 +121,13 @@ public final class WorkerPool<T>
     /**
      * Wait for the {@link RingBuffer} to drain of published events then halt the workers.
      */
-    public void drainAndHalt()
-    {
+    public void drainAndHalt() {
         Sequence[] workerSequences = getWorkerSequences();
-        while (ringBuffer.getCursor() > Util.getMinimumSequence(workerSequences))
-        {
+        while (ringBuffer.getCursor() > Util.getMinimumSequence(workerSequences)) {
             Thread.yield();
         }
 
-        for (WorkProcessor<?> processor : workProcessors)
-        {
+        for (WorkProcessor<?> processor : workProcessors) {
             processor.halt();
         }
 
@@ -165,18 +137,15 @@ public final class WorkerPool<T>
     /**
      * Halt all workers immediately at the end of their current cycle.
      */
-    public void halt()
-    {
-        for (WorkProcessor<?> processor : workProcessors)
-        {
+    public void halt() {
+        for (WorkProcessor<?> processor : workProcessors) {
             processor.halt();
         }
 
         started.set(false);
     }
 
-    public boolean isRunning()
-    {
+    public boolean isRunning() {
         return started.get();
     }
 }

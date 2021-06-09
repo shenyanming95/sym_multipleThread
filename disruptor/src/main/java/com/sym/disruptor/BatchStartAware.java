@@ -1,6 +1,5 @@
 package com.sym.disruptor;
 
-public interface BatchStartAware
-{
+public interface BatchStartAware {
     void onBatchStart(long batchSize);
 }

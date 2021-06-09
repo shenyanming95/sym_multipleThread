@@ -15,7 +15,6 @@
  */
 package com.sym.disruptor;
 
-public interface EventReleaseAware
-{
+public interface EventReleaseAware {
     void setEventReleaser(EventReleaser eventReleaser);
 }
