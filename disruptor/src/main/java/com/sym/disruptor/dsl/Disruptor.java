@@ -26,22 +26,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * <p>A DSL-style API for setting up the disruptor pattern around a ring buffer
- * (aka the Builder pattern).</p>
+ * 高性能亮点设计：
+ * <p>
+ *     1.数据结构层面：使用环形结构、数组、内存预加载;
+ *     2.使用单线程写方式, 内存屏障;
+ *     3.消除伪共享;
+ *     4.序号栅栏和序号配合使用来消除锁和CAS;
+ * </p>
  *
- * <p>A simple example of setting up the disruptor with two event handlers that
- * must process events in order:</p>
- * <pre>
- * <code>Disruptor&lt;MyEvent&gt; disruptor = new Disruptor&lt;MyEvent&gt;(MyEvent.FACTORY, 32, Executors.newCachedThreadPool());
- * EventHandler&lt;MyEvent&gt; handler1 = new EventHandler&lt;MyEvent&gt;() { ... };
- * EventHandler&lt;MyEvent&gt; handler2 = new EventHandler&lt;MyEvent&gt;() { ... };
- * disruptor.handleEventsWith(handler1);
- * disruptor.after(handler1).handleEventsWith(handler2);
- *
- * RingBuffer ringBuffer = disruptor.start();</code>
- * </pre>
- *
- * @param <T> the type of event used.
+ * 序号栅栏机制：
+ * <p>
+ *     1.消费者序号数值必须小于生产者序号数值;
+ *     2.消费者序号数值必须小于其前置(依赖关系)消费者的序号数值;
+ *     3.生产者序号数值不能大于消费者中最小的序号数值;
+ * </p>
  */
 public class Disruptor<T> {
     private final RingBuffer<T> ringBuffer;
